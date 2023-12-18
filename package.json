@@ -1,0 +1,11 @@
+{
+  "name": "jobbook_backend",
+  "version": "1.0.0",
+  "description": "backend architechture for jobbook",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "dzyntech",
+  "license": "ISC"
+}
