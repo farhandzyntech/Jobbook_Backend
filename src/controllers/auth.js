@@ -284,10 +284,6 @@ exports.updateUserProfile = async (req, res, next) => {
       //   user.name = req.body.name || user.name;
       //   user.email = req.body.email || user.email;
         // const updatedUser = await user.updateOne(req.body)
-        res.status(200).json({
-          success: true,
-          data: user,
-        });
   } catch (error) {
       console.error('ERROR', error)
       return next(error)

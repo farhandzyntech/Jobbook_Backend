@@ -19,13 +19,16 @@ const upload = multer({ storage: storage });
 //--//
 
 const advancedResults = require('../middleware/advancedResults');
-const { protect } = require('../middleware/auth');
+const { protect, authorize } = require('../middleware/auth');
 //--//
 let routes = function(){
     let routes = express.Router({mergeParams: true});
     //--//
-    routes.route("/create").post([protect], upload.single('picture'), jobController.create);
+    routes.route("/create").post([protect], authorize('company'), upload.single('picture'), jobController.create);
+    routes.route("/update/:id").put([protect], authorize('company'), upload.single('picture'), jobController.update);
     routes.route("/fetch").get([protect], advancedResults(Job, {path: 'user', select: 'name' }), jobController.fetch);
+    routes.route("/fetch/:id").get([protect], jobController.getJob);
+    routes.route("/apply/:id").post([protect], authorize('talent'), jobController.apply);
     //--//
     return routes;
 };
