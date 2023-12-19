@@ -126,4 +126,13 @@ UserSchema.methods.getResetPasswordToken = function () {
   return confirmTokenCombined;
 };
 
+// // Reverse populate with virtuals
+// UserSchema.virtual('jobs', {
+//   ref: 'Job',
+//   localField: '_id',
+//   foreignField: 'user',
+//   justOne: false
+// });
+
+
 module.exports = mongoose.model('User', UserSchema);
