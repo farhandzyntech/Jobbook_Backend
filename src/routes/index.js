@@ -5,6 +5,9 @@ let routes = function(){
     //--//
     router.use("/auth", require("./auth")());
     router.use("/job", require("./job")());
+    router.use("/news", require("./news")());
+    router.use("/forum", require("./forum")());
+
     //--//
     return router;
 };
