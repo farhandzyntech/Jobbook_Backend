@@ -12,6 +12,11 @@ const JobSchema = new Schema({
         ref: 'Job',
         required: true
     },
+    status:{
+        type: String,
+        enum: ['Pending','Approved', 'Shortlisted', 'Rejected'],
+        default: "Pending"
+    },
     createdAt:{
       type: Date,
       default: Date.now

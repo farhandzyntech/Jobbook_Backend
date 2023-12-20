@@ -254,6 +254,18 @@ exports.getUserProfile = async (req, res) => {
   }
 }
 
+exports.getAllUsers = async (req, res) => {
+  try {
+    const user = await User.find().select('-otp -confirmEmailToken -isEmailConfirmed -twoFactorEnable');
+    res.status(200).json({
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+      console.error('ERROR', error)
+  }
+}
+
 exports.updateUserProfile = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id);

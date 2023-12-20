@@ -28,10 +28,24 @@ const JobSchema = new Schema({
     category: { type: String },
     description: { type: String },
     picture: { type: String },
+    status:{
+        type: String,
+        enum: ['Active', 'Closed', 'Expired'],
+        default: "Active"
+    },
     createdAt:{
       type: Date,
       default: Date.now
     }
 })
+
+
+// Reverse populate with virtuals
+JobSchema.virtual('requests', {
+    ref: 'Request',
+    localField: '_id',
+    foreignField: 'job',
+    justOne: false
+  });
 
 module.exports = mongoose.model('Job', JobSchema);

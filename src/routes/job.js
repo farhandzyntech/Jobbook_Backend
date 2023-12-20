@@ -29,6 +29,8 @@ let routes = function(){
     routes.route("/fetch").get([protect], advancedResults(Job, {path: 'user', select: 'name' }), jobController.fetch);
     routes.route("/fetch/:id").get([protect], jobController.getJob);
     routes.route("/apply/:id").post([protect], authorize('talent'), jobController.apply);
+    routes.route("/stats/:id").get([protect], authorize('company'), jobController.stats);
+    routes.route("/applicant/:id").get([protect], authorize('company'), jobController.applicant);
     //--//
     return routes;
 };

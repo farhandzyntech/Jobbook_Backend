@@ -1,5 +1,6 @@
 const asyncHandler = require('../middleware/async');
 const Job = require('../schemas/Job');
+const User = require('../schemas/User');
 const Request = require('../schemas/request');
 const ErrorResponse = require('../utils/errorResponse');
 
@@ -97,11 +98,47 @@ exports.apply = async (req, res, next)=>{
             request = new Request({user: req.user.id, job: req.params.id})
             await request.save();
             //send response
-            res.status(201).json({
+            res.status(200).json({
                 success:true,
                 data: request
             })
         }
+    } catch (error) {
+        console.error(error);
+        return next(error)
+    }
+}
+
+exports.stats = async (req, res, next)=>{
+    try {
+        let totalCount = await Request.countDocuments({job: req.params.id})
+        let pendingCount = await Request.countDocuments({status: "Pending", job: req.params.id})
+        let shortlistCount = await Request.countDocuments({status: "Shortlisted", job: req.params.id})
+        let rejectedCount = await Request.countDocuments({status: "Rejected", job: req.params.id})
+        res.status(200).json({
+            success:true,
+            data: {
+                totalCount: totalCount,
+                pendingCount: pendingCount,
+                shortlistCount: shortlistCount,
+                rejectedCount: rejectedCount
+            }
+        })
+    } catch (error) {
+        console.error(error);
+        return next(error)
+    }
+}
+
+
+exports.applicant = async (req, res, next)=>{
+    try {
+        let records = await Request.find({ job: req.params.id, status: (req.query.status) ? req.query.status : ['Pending', 'Shortlisted', 'Rejected'] })
+        .populate({path: 'job'}).populate({ path: 'user', select: 'id name email phone picture location address' })
+        res.status(200).json({
+            success:true,
+            data: records
+        })
     } catch (error) {
         console.error(error);
         return next(error)
