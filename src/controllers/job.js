@@ -95,7 +95,7 @@ exports.apply = async (req, res, next)=>{
             return next(new ErrorResponse('You have already applied for this job', 409));
         }else {
             //create a new request and save it in db
-            request = new Request({user: req.user.id, job: req.params.id})
+            request = new Request({ user: req.user.id, job: req.params.id })
             await request.save();
             //send response
             res.status(200).json({

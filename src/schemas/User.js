@@ -35,14 +35,26 @@ const UserSchema = new Schema({
     location: { type: String },
     address: { type: String },
     dob: { type: String },
-    otp: { 
-      type: String,
-    },
+    about: { type: String },
+    skills: { type: String },
+    experience: [{
+      company: String,
+      title: String,
+      from: Date,
+      to: Date,
+      current: {type: Boolean, default: false}
+    }],
+    otp: { type: String },
     status: { type: String },
     resetPasswordToken: {type: String},
     resetPasswordExpire: {type: Date},
     confirmEmailToken: {type: String},
     isEmailConfirmed: {
+      type: Boolean,
+      default: false,
+    },
+    confirmPhoneToken: {type: String},
+    isPhoneConfirmed: {
       type: Boolean,
       default: false,
     },

@@ -12,6 +12,11 @@ const JobSchema = new Schema({
         ref: 'Job',
         required: true
     },
+    name:{ type: String },
+    portfolio:{ type: String },
+    resume:{ type: String },
+    attatchment:{ type: String },
+    details:{ type: String },
     status:{
         type: String,
         enum: ['Pending','Approved', 'Shortlisted', 'Rejected'],

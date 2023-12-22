@@ -22,7 +22,7 @@ exports.signup = async (req, res, next) => {
     // Create reset url
     const confirmEmailURL = `${req.protocol}://${req.get(
       'host',
-    )}/api/v1/saleslentz/auth/confirmemail?token=${confirmEmailToken}`;
+    )}/api/v1/jobbook/auth/confirmemail?token=${confirmEmailToken}`;
 
     const message = `You are receiving this email because you need to confirm your email address. Please make a GET request to: \n\n ${confirmEmailURL}`;
 
@@ -269,13 +269,15 @@ exports.getAllUsers = async (req, res) => {
 exports.updateUserProfile = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id);
-    user.dob = req.body.dob || user.dob;
     user.name = req.body.name || user.name;
+    user.about = req.body.about || user.about;
+    user.skills = req.body.skills || user.skills;
+    let experience =  JSON.parse(req.body.experience)
+    experience.forEach(element => {
+      user.experience.push(element)
+    });
+    user.dob = req.body.dob || user.dob;
     user.address = req.body.address || user.address;
-    user.licence = req.body.licence || user.licence;
-    user.compmayName = req.body.compmayName || user.compmayName;
-    user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
-    user.emailAddress = req.body.emailAddress || user.emailAddress;
     user.picture = (req.file) ? req.file.filename : user.picture || "";
     await user.save();
     return  res.status(200).json({
