@@ -17,30 +17,65 @@ exports.create = async (req, res, next)=>{
     }
 }
 
+// exports.create = async (req, res, next)=>{
+//     try {
+//         req.body.user = req.user.id
+//         if(req.body.tags) req.body.tags = req.body.tags.split(',')
+//         if(req.files && req.files.length > 0) req.body.photos = req.files.map(a=>a.filename)
+//         const record = await News.create(req.body)
+//         res.status(200).json({
+//             success: true,
+//             data: record
+//         });
+//     } catch (error) {
+//         console.error(error);
+//         return next(error)
+//     }
+// }
+
 exports.update = async (req, res, next)=>{
     try {
-        if(!req.params.id) return next(new ErrorResponse("Please provide an id", 400))
         const record = await News.findById(req.params.id)
         if(!record) return next(new ErrorResponse("Record not found!", 400))
-          // Make sure user is News owner
-        if (record.user.toString() !== req.user.id && req.user.role !== 'company') {
+          // Make sure user is job owner
+        if (record.user.toString() !== req.user.id && req.user.role !== 'talent') {
             return next(
             new ErrorResponse(
-                `User ${req.user.id} is not authorized to update this News`,
+                `User ${req.user.id} is not authorized to update this job`,
                 401
             )
             );
         }
-        record.type = req.body.type || record.type;
-        record.travel = req.body.travel || record.travel;
-        record.location = req.body.location || record.location;
-        record.salary = req.body.salary || record.salary;
-        record.salaryMode = req.body.salaryMode || record.salaryMode;
-        record.speciality = req.body.speciality || record.speciality;
-        record.category = req.body.category || record.category;
+        record.title = req.body.title || record.title;
         record.description = req.body.description || record.description;
+        record.location = req.body.location || record.location;
+        record.tags = req.body.tags || record.tags;
         record.picture = (req.file) ? req.file.filename : record.picture || "";
         await record.save()
+        res.status(200).json({
+            success: true,
+            data: record
+        });
+    } catch (error) {
+        console.error(error);
+        return next(error)
+    }
+}
+
+exports.delete = async (req, res, next)=>{
+    try {
+        const record = await News.findById(req.params.id)
+        if(!record) return next(new ErrorResponse("Record not found!", 400))
+          // Make sure user is job owner
+        if (record.user.toString() !== req.user.id && req.user.role !== 'talent') {
+            return next(
+            new ErrorResponse(
+                `User ${req.user.id} is not authorized to update this job`,
+                401
+            )
+            );
+        }
+        await record.deleteOne()
         res.status(200).json({
             success: true,
             data: record
@@ -54,17 +89,4 @@ exports.update = async (req, res, next)=>{
 //fetch all my Newss
 exports.fetch = asyncHandler(async (req, res, next) => {
     res.status(200).json(res.advancedResults);
-  });
-
-//get single News 
-exports.getNews = asyncHandler(async (req, res, next) => {
-    const record = await News.findById(req.params.id);
-
-    if (!record) {
-        return next(
-        new ErrorResponse(`record not found with id of ${req.params.id}`, 404)
-        );
-    }
-
-    res.status(200).json({ success: true, data: record });
 });

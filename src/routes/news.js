@@ -24,10 +24,10 @@ const { protect, authorize } = require('../middleware/auth');
 let routes = function(){
     let routes = express.Router({mergeParams: true});
     //--//
-    routes.route("/create").post([protect], authorize('company'), upload.single('picture'), newsController.create);
-    routes.route("/update/:id").put([protect], authorize('company'), upload.single('picture'), newsController.update);
+    routes.route("/create").post([protect], authorize('talent'), upload.single('picture'), newsController.create);
     routes.route("/fetch").get([protect], advancedResults(News, {path: 'user', select: 'name' }), newsController.fetch);
-    routes.route("/fetch/:id").get([protect], newsController.getNews);
+    routes.route("/update/:id").put([protect], authorize('talent'), upload.single('picture'), newsController.update);
+    routes.route("/delete/:id").delete([protect], authorize('talent'), newsController.delete);
     //--//
     return routes;
 };

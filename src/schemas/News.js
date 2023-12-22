@@ -7,45 +7,27 @@ const NewsSchema = new Schema({
         ref: 'User',
         required: true
     },
-    type: {
+    title: {
         type: String,
-        required: true,
-        enum: ['fulltime', 'contract', 'parttime', 'internship'],
-        default: 'fulltime'
+        required: true
     },
-    travel: { type: String },
+    description: {
+        type: String,
+        required: true
+    },
     location: { type: String },
-    salary: {
-        type: String,
-    },
-    salaryMode: {
-        type: String,
-        required: true,
-        enum: ['daily', 'weekly', 'monthly'],
-        default: 'monthly'
-    },
-    speciality: { type: String },
-    category: { type: String },
-    description: { type: String },
     picture: { type: String },
+    // photos: [{ type: String }],
+    tags: { type: String },
     status:{
         type: String,
-        enum: ['Active', 'Closed', 'Expired'],
-        default: "Active"
+        enum: ['0', '1'],
+        default: "1"
     },
     createdAt:{
       type: Date,
       default: Date.now
     }
 })
-
-
-// // Reverse populate with virtuals
-// NewsSchema.virtual('requests', {
-//     ref: 'Request',
-//     localField: '_id',
-//     foreignField: 'job',
-//     justOne: false
-//   });
 
 module.exports = mongoose.model('News', NewsSchema);
