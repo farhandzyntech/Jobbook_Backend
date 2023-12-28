@@ -17,9 +17,22 @@ const UserSchema = new Schema({
     },
     password: {
       type: String,
-      required: [true, 'Please add a password'],
+      // required: [true, 'Please add a password'],
+      required: false,
       minlength: 6,
       select: false
+    },
+    facebookId: { 
+      type: String,
+      unique: true,
+    },
+    googleId: { 
+      type: String,
+      unique: true,
+    },
+    appleId: { 
+      type: String,
+      unique: true,
     },
     phone: {
       type: String,
@@ -146,5 +159,6 @@ UserSchema.methods.getResetPasswordToken = function () {
 //   justOne: false
 // });
 
+UserSchema.indexes({ email: 1, phone: 1, appleId: 1, googleId: 1, facebookId: 1 }, { unique: true });
 
 module.exports = mongoose.model('User', UserSchema);

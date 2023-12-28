@@ -49,11 +49,11 @@ exports.signup = async (req, res, next) => {
  */
 exports.login = async (req, res, next) => {
   try {
-    const { username, password } = req.body;
+    const { username, password, socialId } = req.body;
 
     // Validate email and password
-    if (!username || !password) {
-      return next(new ErrorResponse('Please provide an email and password', 400));
+    if (!socialId) {
+      if (!username || !password) return next(new ErrorResponse('Please provide an email and password', 400));
     }
 
     // Check for user
@@ -61,12 +61,17 @@ exports.login = async (req, res, next) => {
       $or: [
         { email: username },
         { phone: username },
+        { appleId: socialId },
+        { googleId: socialId },
+        { facebookId: socialId },
       ]
     }).select("+password");
 
     if (!user) {
       return next(new ErrorResponse('Invalid credentials', 401));
     }
+
+    if(user && socialId) { sendTokenResponse(user, 200, res); }
 
     // Check if password matches
     const isMatch = await user.matchPassword(password);
