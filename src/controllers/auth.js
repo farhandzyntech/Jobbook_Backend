@@ -14,8 +14,14 @@ const ErrorResponse = require('../utils/errorResponse');
  */
 exports.signup = async (req, res, next) => {
   try {
+    // Check if the email is already registered
+    const existingUser = await User.findOne({ email: req.body.email });
+    if (existingUser) {
+      return next(new ErrorResponse('Email is already registered', 409));
+    }
+    // Create and save a new user document
     const user = await User.create(req.body)
-
+    
     // grab token and send to email
     const confirmEmailToken = user.generateEmailConfirmToken();
 
@@ -39,6 +45,165 @@ exports.signup = async (req, res, next) => {
     return next(error);
   }
 }
+
+exports.signupFacebook = async (req, res, next) => {
+  try {
+    const { facebookId, token, email, displayName } = req.body;
+
+    // Check if the Facebook ID is already registered
+    const user = await User.findOne({
+      $or: [
+        { "facebook.id": facebookId },
+        { email: email }
+      ]
+    });
+    if (user) {
+      if(user.facebook.id === undefined){
+        user.facebook.id = facebookId,
+        user.facebook.token = token
+        user.facebook.email = email
+        user.facebook.displayName = displayName
+      }
+      await user.save();
+      sendTokenResponse(user, 200, res);
+    }else{
+      let newUser = new User();
+      newUser.email = email
+      newUser.name = req.body.name
+      newUser.email = email
+      newUser.facebook.id = facebookId
+      newUser.facebook.token = token
+      newUser.facebook.email = email
+      newUser.facebook.displayName = displayName
+      await newUser.save();
+      sendTokenResponse(newUser, 200, res);
+    }
+    
+    // Create a new user with Facebook authentication
+    // const newUser = new User({
+    //   facebook: {
+    //     id: facebookId,
+    //     token,
+    //     email,
+    //     displayName,
+    //   },
+    // });
+
+    // await newUser.save();
+
+    // return res.status(201).json({ message: 'User created successfully with Facebook' });
+  } catch (error) {
+    console.error('ERROR', error)
+    return next(error);
+  }
+}
+
+
+exports.signupGoogle = async (req, res, next) => {
+  try {
+    const { googleId, token, email, name } = req.body;
+
+    // Check if the google ID is already registered
+    const user = await User.findOne({
+      $or: [
+        { "google.id": googleId },
+        { email: email }
+      ]
+    });
+    if (user) {
+      if(user.google.id === undefined){
+        user.google.id = googleId,
+        user.google.token = token
+        user.google.email = email
+        user.google.displayName = name
+      }
+      await user.save();
+      sendTokenResponse(user, 200, res);
+    }else{
+      let newUser = new User();
+      newUser.email = email
+      newUser.name = req.body.name
+      newUser.email = email
+      newUser.google.id = googleId
+      newUser.google.token = token
+      newUser.google.email = email
+      newUser.google.displayName = displayName
+      await newUser.save();
+      sendTokenResponse(newUser, 200, res);
+    }
+    
+    // Create a new user with google authentication
+    // const newUser = new User({
+    //   google: {
+    //     id: googleId,
+    //     token,
+    //     email,
+    //     displayName,
+    //   },
+    // });
+
+    // await newUser.save();
+
+    // return res.status(201).json({ message: 'User created successfully with google' });
+  } catch (error) {
+    console.error('ERROR', error)
+    return next(error);
+  }
+}
+
+
+exports.signupApple = async (req, res, next) => {
+  try {
+    const { appleId, token, email, name } = req.body;
+
+    // Check if the apple ID is already registered
+    const user = await User.findOne({
+      $or: [
+        { "apple.id": appleId },
+        { email: email }
+      ]
+    });
+    if (user) {
+      if(user.apple.id === undefined){
+        user.apple.id = appleId,
+        user.apple.token = token
+        user.apple.email = email
+        user.apple.displayName = name
+      }
+      await user.save();
+      sendTokenResponse(user, 200, res);
+    }else{
+      let newUser = new User();
+      newUser.email = email
+      newUser.name = req.body.name
+      newUser.email = email
+      newUser.apple.id = appleId 
+      newUser.apple.token = token
+      newUser.apple.email = email
+      newUser.apple.displayName = displayName
+      await newUser.save();
+      sendTokenResponse(newUser, 200, res);
+    }
+    
+    // Create a new user with apple authentication
+    // const newUser = new User({
+    //   apple: {
+    //     id: appleId,
+    //     token,
+    //     email,
+    //     displayName,
+    //   },
+    // });
+
+    // await newUser.save();
+
+    // return res.status(201).json({ message: 'User created successfully with apple' });
+  } catch (error) {
+    console.error('ERROR', error)
+    return next(error);
+  }
+}
+
 
 /**
  * @description Authenticate user and generate token

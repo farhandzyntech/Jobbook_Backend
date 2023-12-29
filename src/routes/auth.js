@@ -23,6 +23,10 @@ let routes = function(){
     let routes = express.Router({mergeParams: true});
     //--//
     routes.route("/signup").post(authController.signup);
+    routes.route("/signupFacebook").post(authController.signupFacebook);
+    routes.route("/signupGoogle").post(authController.signupGoogle);
+    routes.route("/signupApple").post(authController.signup);
+    routes.route("/signup").post(authController.signup);
     routes.route("/login").post(authController.login);
     routes.route("/logout").post([protect], authController.logout);
     routes.route("/confirmemail").get(authController.confirmEmail);

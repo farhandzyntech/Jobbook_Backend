@@ -10,6 +10,7 @@ const UserSchema = new Schema({
       type: String,
       required: [true, 'Please add an email'],
       unique: true,
+      sparse: true,
       match: [
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
         'Please add a valid email',
@@ -22,22 +23,25 @@ const UserSchema = new Schema({
       minlength: 6,
       select: false
     },
-    facebookId: { 
-      type: String,
-      unique: true,
+    facebook: {
+        id: { type: String, unique: true, sparse: true },
+        token: String,
+        email: String,
+        displayName: String,
     },
-    googleId: { 
-      type: String,
-      unique: true,
+    google: {
+      id: { type: String, unique: true, sparse: true },
+      token: String,
+      email: String,
+      displayName: String,
     },
-    appleId: { 
-      type: String,
-      unique: true,
+    apple: {
+      id: { type: String, unique: true, sparse: true },
+      token: String,
+      email: String,
+      displayName: String,
     },
-    phone: {
-      type: String,
-      unique: true
-    },
+    phone: { type: String, unique: true, sparse: true },
     role: {
         type: String,
         required: true,
@@ -77,6 +81,8 @@ const UserSchema = new Schema({
       type: Boolean,
       default: false,
     },
+    device_type:{ type: String },
+    device_token:{ type: String },
     createdAt:{
       type: Date,
       default: Date.now
@@ -159,6 +165,6 @@ UserSchema.methods.getResetPasswordToken = function () {
 //   justOne: false
 // });
 
-UserSchema.indexes({ email: 1, phone: 1, appleId: 1, googleId: 1, facebookId: 1 }, { unique: true });
+UserSchema.indexes({ email: 1, phone: 1 }, { unique: true });
 
 module.exports = mongoose.model('User', UserSchema);
