@@ -138,6 +138,33 @@ exports.savedToggle = async (req, res, next)=>{
     }
 }
 
+exports.savedJobs = async (req, res, next)=>{
+    try {
+        const record = await Job.findById(req.params.id)
+        if(!record) return next(new ErrorResponse("No record found!", 400))
+        let request = await Saved.findOne({user: req.user.id, job: req.params.id})
+        if(!request){
+            //create a new request and save it in db
+            request = new Saved({ user: req.user.id, job: req.params.id })
+            await request.save();
+            //send response
+            res.status(200).json({
+                success:true,
+                data: request
+            })
+        }else {
+            await request.deleteOne({user: req.user.id, job: req.params.id});
+            res.status(200).json({
+                success:true,
+                data: request
+            })
+        }
+    } catch (error) {
+        console.error(error);
+        return next(error)
+    }
+}
+
 exports.stats = async (req, res, next)=>{
     try {
         let totalCount = await Request.countDocuments({job: req.params.id})
