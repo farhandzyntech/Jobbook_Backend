@@ -217,22 +217,17 @@ exports.login = async (req, res, next) => {
     const { username, password, socialId } = req.body;
 
     // Validate email and password
-    if (!socialId) {
-      if (!username || !password) return next(new ErrorResponse('Please provide an email and password', 400));
-    }
+    if (!username || !password) return next(new ErrorResponse('Please provide an email and password', 400));
 
     // Check for user
     const user = await User.findOne({
       $or: [
         { email: username },
         { phone: username },
-        { appleId: socialId },
-        { googleId: socialId },
-        { facebookId: socialId },
       ]
     }).select("+password");
-
-    if (!user) {
+    
+    if (!user || !user.password) {
       return next(new ErrorResponse('Invalid credentials', 401));
     }
 
@@ -260,6 +255,31 @@ exports.login = async (req, res, next) => {
     //     dob: user.dob
     //   }
     // });
+  } catch (error) {
+    console.error('ERROR', error);
+    return next(error);
+  }
+};
+
+// Social login
+exports.socialLogin = async (req, res, next) => {
+  try {
+    const { socialId } = req.body;
+    // Check if the Social ID is registered
+    const user = await User.findOne({
+      $or: [
+        { "facebook.id": socialId },
+        { "google.id": socialId },
+        { "apple.id": socialId },
+      ]
+    });
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid social token' });
+    }
+    if (user) {
+      await user.save();
+      sendTokenResponse(user, 200, res);
+    }
   } catch (error) {
     console.error('ERROR', error);
     return next(error);

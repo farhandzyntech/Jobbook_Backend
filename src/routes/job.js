@@ -31,6 +31,7 @@ let routes = function(){
     routes.route("/apply/:id").post([protect], authorize('talent'), upload.single('resume'), jobController.apply);
     routes.route("/stats/:id").get([protect], authorize('company'), jobController.stats);
     routes.route("/applicant/:id").get([protect], authorize('company'), jobController.applicant);
+    routes.route("/savedToggle/:id").post([protect], authorize('talent'), jobController.savedToggle);
     //--//
     return routes;
 };

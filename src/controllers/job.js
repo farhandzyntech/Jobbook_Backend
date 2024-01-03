@@ -3,6 +3,7 @@ const Job = require('../schemas/Job');
 const User = require('../schemas/User');
 const Request = require('../schemas/Request');
 const ErrorResponse = require('../utils/errorResponse');
+const Saved = require('../schemas/Saved');
 
 exports.create = async (req, res, next)=>{
     try {
@@ -98,6 +99,34 @@ exports.apply = async (req, res, next)=>{
             request = new Request({ user: req.user.id, job: req.params.id })
             await request.save();
             //send response
+            res.status(200).json({
+                success:true,
+                data: request
+            })
+        }
+    } catch (error) {
+        console.error(error);
+        return next(error)
+    }
+}
+
+exports.savedToggle = async (req, res, next)=>{
+    try {
+        const record = await Job.findById(req.params.id)
+        if(!record) return next(new ErrorResponse("No record found!", 400))
+        let request = await Saved.findOne({user: req.user.id, job: req.params.id})
+        if(!request){
+            console.log("dkjfghu");
+            //create a new request and save it in db
+            request = new Saved({ user: req.user.id, job: req.params.id })
+            await request.save();
+            //send response
+            res.status(200).json({
+                success:true,
+                data: request
+            })
+        }else {
+            await request.deleteOne({user: req.user.id, job: req.params.id});
             res.status(200).json({
                 success:true,
                 data: request

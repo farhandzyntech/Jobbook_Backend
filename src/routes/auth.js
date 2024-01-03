@@ -23,17 +23,20 @@ let routes = function(){
     let routes = express.Router({mergeParams: true});
     //--//
     routes.route("/signup").post(authController.signup);
-    routes.route("/signupFacebook").post(authController.signupFacebook);
-    routes.route("/signupGoogle").post(authController.signupGoogle);
-    routes.route("/signupApple").post(authController.signup);
-    routes.route("/signup").post(authController.signup);
+    routes.route("/signup/facebook").post(authController.signupFacebook);
+    routes.route("/signup/google").post(authController.signupGoogle);
+    routes.route("/signup/apple").post(authController.signupApple);
+    //--////////////////////////////////
     routes.route("/login").post(authController.login);
+    routes.route('/sociallogin').post(authController.socialLogin);
     routes.route("/logout").post([protect], authController.logout);
+    //--////////////////////////////////
     routes.route("/confirmemail").get(authController.confirmEmail);
     routes.route("/otp").post(authController.generateOtp);
     routes.route("/verify-otp").post(authController.verifyotp);
     routes.route("/forgot").post(authController.forgotPassword);
     routes.route("/resetpassword/:resettoken").put(authController.resetPassword);
+    //--////////////////////////////////
     routes.route("/profile").get([protect], authController.getUserProfile);
     routes.route("/getAllUsers").get([protect], authController.getAllUsers);
     routes.route("/update-profile").put([protect], upload.single('picture'), authController.updateUserProfile);
