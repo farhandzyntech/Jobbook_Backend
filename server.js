@@ -62,7 +62,9 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'uploads')));
                                                                  
 // Mount routers
-app.use("/api/v1/jobbook", require("./src/routes")());
+app.use("/api/v1/jobbook", require("./src/module/auth")());
+app.use("/api/v1/jobbook/talent", require("./src/module/talent")());
+app.use("/api/v1/jobbook/company", require("./src/module/company")());
 
 //--//
 app.use(errorHandler);

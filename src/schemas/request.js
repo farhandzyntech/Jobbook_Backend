@@ -17,6 +17,7 @@ const JobSchema = new Schema({
     resume:{ type: String },
     attatchment:{ type: String },
     details:{ type: String },
+    date_applied: { type: Date, default: Date.now },
     status:{
         type: String,
         enum: ['Pending','Approved', 'Shortlisted', 'Rejected'],

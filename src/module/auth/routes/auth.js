@@ -17,12 +17,12 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 //--//
 
-const { protect } = require('../middleware/auth');
+const { protect } = require('../../../middleware/auth');
 //--//
 let routes = function(){
     let routes = express.Router({mergeParams: true});
     //--//
-    routes.route("/signup").post(authController.signup);
+    routes.route("/signup").post(upload.single('picture'), authController.signup);
     routes.route("/signup/facebook").post(authController.signupFacebook);
     routes.route("/signup/google").post(authController.signupGoogle);
     routes.route("/signup/apple").post(authController.signupApple);

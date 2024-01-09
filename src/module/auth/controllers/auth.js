@@ -1,8 +1,8 @@
-const User = require('../schemas/User')
+const User = require('../../../schemas/User')
 const crypto = require('crypto');
-const asyncHandler = require('../middleware/async');
-const nodemailer = require('../utils/nodemailer');
-const ErrorResponse = require('../utils/errorResponse');
+const asyncHandler = require('../../../middleware/async');
+const nodemailer = require('../../../utils/nodemailer');
+const ErrorResponse = require('../../../utils/errorResponse');
 
 //--//
 /**
@@ -20,6 +20,7 @@ exports.signup = async (req, res, next) => {
       return next(new ErrorResponse('Email is already registered', 409));
     }
     // Create and save a new user document
+    req.body.picture = (req.file) ? req.file.filename : "";
     const user = await User.create(req.body)
     
     // grab token and send to email
@@ -434,7 +435,7 @@ exports.logout = asyncHandler(async (req, res, next) => {
  */
 exports.getUserProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('name phone emailAddress mobileNumber dob address licence picture');
+    const user = await User.findById(req.user.id).select('name phone email dob address licence picture');
     res.status(200).json({
       success: true,
       data: user,
@@ -462,7 +463,7 @@ exports.updateUserProfile = async (req, res, next) => {
     user.name = req.body.name || user.name;
     user.about = req.body.about || user.about;
     user.skills = req.body.skills || user.skills;
-    let experience =  JSON.parse(req.body.experience)
+    let experience = (req.body.experience) ? JSON.parse(req.body.experience) : []
     experience.forEach(element => {
       user.experience.push(element)
     });
@@ -664,7 +665,8 @@ const sendTokenResponse = (user, statusCode, res) => {
         name: user.name,
         email: user.email,
         phone: user.phone,
-        role: user.role
+        role: user.role,
+        picture: user.picture
       }
     });
   };
