@@ -1,6 +1,6 @@
-const asyncHandler = require('../middleware/async');
-const Forum = require('../schemas/Forum');
-const ErrorResponse = require('../utils/errorResponse');
+const asyncHandler = require('../../../middleware/async');
+const Forum = require('../../../schemas/Forum');
+const ErrorResponse = require('../../../utils/errorResponse');
 
 exports.create = async (req, res, next)=>{
     try {

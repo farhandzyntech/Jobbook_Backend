@@ -1,6 +1,6 @@
 const express = require("express");
 const Forum = require("../../../schemas/Forum");
-const forumController = require("../../../controllers/forum");
+const forumController = require("../controllers/forum");
 
 //--//
 

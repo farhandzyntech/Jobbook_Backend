@@ -1,10 +1,6 @@
-const asyncHandler = require('../../../middleware/advancedResults');
-const Job = require('../../../schemas/Job');
-const User = require('../../../schemas/User');
+const asyncHandler = require('../../../middleware/async');
 const Request = require('../../../schemas/Request');
 const ErrorResponse = require('../../../utils/errorResponse');
-const Saved = require('../../../schemas/Saved');
-
 
 exports.stats = async (req, res, next)=>{
     try {

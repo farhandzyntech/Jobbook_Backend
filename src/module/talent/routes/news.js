@@ -1,6 +1,6 @@
 const express = require("express");
 const News = require("../../../schemas/News");
-const newsController = require("../../../controllers/news");
+const newsController = require("../controllers/news");
 const multer  = require('multer')
 const mimetype = require('mime-types')
 
