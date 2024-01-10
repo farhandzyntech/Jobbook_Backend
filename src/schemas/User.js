@@ -63,6 +63,14 @@ const UserSchema = new Schema({
     }],
     otp: { type: String },
     status: { type: String },
+    tokens: [
+      {
+        token: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
     resetPasswordToken: {type: String},
     resetPasswordExpire: {type: Date},
     confirmEmailToken: {type: String},
@@ -107,12 +115,12 @@ UserSchema.pre('save', async function (next) {
  * Sign JWT and return
  * @returns {string} JWT token
  */
-UserSchema.methods.getSignedJwtToken = function () {
-  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, 
-  // {
-  //   expiresIn: process.env.JWT_EXPIRE,
-  // }
-  );
+UserSchema.methods.getSignedJwtToken = async function () {
+  const token = jwt.sign({ _id: this._id.toString() }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
+  this.tokens = { token };
+  // this.tokens = this.tokens.concat({ token });
+  await this.save();
+  return token;
 };
 
 /**

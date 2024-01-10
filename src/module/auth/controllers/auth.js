@@ -416,6 +416,8 @@ exports.verifyotp = async (req, res, next) => {
 
 
 exports.logout = asyncHandler(async (req, res, next) => {
+  req.user.tokens = req.user.tokens.filter((token) => token.token !== req.token);
+  await req.user.save();
   res.cookie('token', 'none', {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
@@ -654,9 +656,9 @@ exports.confirmEmail = asyncHandler(async (req, res, next) => {
 });
 
 // Get token from model, create cookie and send response
-const sendTokenResponse = (user, statusCode, res) => {
+const sendTokenResponse = async (user, statusCode, res) => {
     // Create token
-    const token = user.getSignedJwtToken();
+    const token = await user.getSignedJwtToken();
     res.status(statusCode).cookie('token', token).json({
       success: true,
       token,
