@@ -54,3 +54,13 @@ exports.update = async (req, res, next)=>{
 exports.fetch = asyncHandler(async (req, res, next) => {
     res.status(200).json(res.advancedResults);
 });
+
+exports.jobs = async (req, res) => {
+    try {
+      // Fetch all jobs
+      res.model = Job; // Set the model for pagination middleware
+      res.json(res.paginatedResults);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+}

@@ -117,8 +117,8 @@ UserSchema.pre('save', async function (next) {
  */
 UserSchema.methods.getSignedJwtToken = async function () {
   const token = jwt.sign({ _id: this._id.toString() }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
-  this.tokens = { token };
-  // this.tokens = this.tokens.concat({ token });
+  // this.tokens = { token };
+  this.tokens = this.tokens.concat({ token });
   await this.save();
   return token;
 };

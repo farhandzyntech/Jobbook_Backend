@@ -673,3 +673,53 @@ const sendTokenResponse = async (user, statusCode, res) => {
     });
   };
   
+  //--////////////////////////////////
+  //--////////////////////////////////
+  //--////////////////////////////////
+  // app.post('/delete-app-callback', (req, res) => {
+  const deleteCallback = async (user, statusCode, res) => {
+    const signedRequest = req.body.signed_request;
+    const data = parseSignedRequest(signedRequest);
+    
+    if (!data) {
+      res.status(400).json({ error: 'Bad Signed JSON signature!' });
+      return;
+    }
+  
+    const userId = data.user_id;
+  
+    // Start data deletion
+   
+    const statusUrl = 'https://www.<your_website>.com/deletion?id=abc123'; // URL to track the deletion
+    const confirmationCode = 'abc123'; // unique code for the deletion request
+  
+    const responseData = {
+      url: statusUrl,
+      confirmation_code: confirmationCode,
+    };
+  
+    res.json(responseData);
+  };
+  
+  function parseSignedRequest(signedRequest) {
+    const [encodedSig, payload] = signedRequest.split('.', 2);
+  
+    const secret = "appsecret"; // Use your app secret here
+  
+    // Decode the data
+    const sig = base64UrlDecode(encodedSig);
+    const data = JSON.parse(base64UrlDecode(payload));
+  
+    // Confirm the signature
+    const expectedSig = crypto.createHmac('sha256', secret).update(payload).digest('binary');
+    if (sig !== expectedSig) {
+      console.error('Bad Signed JSON signature!');
+      return null;
+    }
+  
+    return data;
+  }
+  
+  function base64UrlDecode(input) {
+    return Buffer.from(input.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('binary');
+  }

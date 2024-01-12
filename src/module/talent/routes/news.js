@@ -25,7 +25,7 @@ let routes = function(){
     let routes = express.Router({mergeParams: true});
     //--//
     routes.route("/create").post([protect], authorize('talent'), upload.single('picture'), newsController.create);
-    routes.route("/fetch").get([protect], authorize('talent'), advancedResults(News, {path: 'user', select: 'name' }), newsController.fetch);
+    routes.route("/fetch").get([protect], authorize('talent'), advancedResults(News, {path: 'user', select: 'name picture' }), newsController.fetch);
     routes.route("/update/:id").put([protect], authorize('talent'), upload.single('picture'), newsController.update);
     routes.route("/delete/:id").delete([protect], authorize('talent'), newsController.delete);
     //--//

@@ -29,12 +29,26 @@ const JobSchema = new Schema({
     description: { type: String },
     experience: { type: String },
     picture: { type: String },
-    status:{
+    // Users who have saved this job
+    // savedByUsers: [
+    //     {
+    //       type: mongoose.Schema.Types.ObjectId,
+    //       ref: 'User',
+    //     },
+    // ],
+    // // Users who have applied to this job
+    // appliedByUsers: [
+    //     {
+    //       type: mongoose.Schema.Types.ObjectId,
+    //       ref: 'User',
+    //     },
+    // ],
+    status: {
         type: String,
         enum: ['Active', 'Closed', 'Expired'],
         default: "Active"
     },
-    createdAt:{
+    createdAt: {
       type: Date,
       default: Date.now
     }
