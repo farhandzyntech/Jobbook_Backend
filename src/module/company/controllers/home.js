@@ -1,5 +1,6 @@
 const asyncHandler = require('../../../middleware/async');
 const Request = require('../../../schemas/Request');
+const Job = require('../../../schemas/Job');
 const ErrorResponse = require('../../../utils/errorResponse');
 
 exports.stats = async (req, res, next)=>{
@@ -45,3 +46,17 @@ exports.fetchForum = asyncHandler(async (req, res, next) => {
 exports.fetchNews = asyncHandler(async (req, res, next) => {
     res.status(200).json(res.advancedResults);
 });
+
+exports.fetchJobs = asyncHandler(async (req, res, next) => {
+    res.status(200).json(res.advancedResults);
+});
+
+exports.jobsfilter = async (req, res) => {
+    try {
+      // Fetch all jobs
+      res.model = Job; // Set the model for pagination middleware
+      res.json(res.paginatedResults);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+}

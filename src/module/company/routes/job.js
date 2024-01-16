@@ -23,11 +23,9 @@ const { protect, authorize } = require('../../../middleware/auth');
 let routes = function(){
     let routes = express.Router({mergeParams: true});
     //--////////////////////////////////
-    routes.route("/fetch").get([protect], authorize('company'), advancedResults(Job, {path: 'user', select: 'name' }), jobController.fetch);
     routes.route("/create").post([protect], authorize('company'), upload.single('picture'), jobController.create);
     routes.route("/update/:id").put([protect], authorize('company'), upload.single('picture'), jobController.update);
     //--////////////////////////////////
-    routes.route("/jobs").get([protect], authorize('company'), paginationResults(Job), jobController.jobs);
     //--////////////////////////////////
     return routes;
 };

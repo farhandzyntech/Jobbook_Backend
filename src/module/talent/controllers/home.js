@@ -1,10 +1,14 @@
 const asyncHandler = require('../../../middleware/async');
-const Job = require('../../../schemas/Job');
-const User = require('../../../schemas/User');
 const Request = require('../../../schemas/Request');
 const ErrorResponse = require('../../../utils/errorResponse');
-const Saved = require('../../../schemas/Saved');
 
+exports.fetchForum = asyncHandler(async (req, res, next) => {
+    res.status(200).json(res.advancedResults);
+});
+
+exports.fetchNews = asyncHandler(async (req, res, next) => {
+    res.status(200).json(res.advancedResults);
+});
 
 exports.fetch = asyncHandler(async (req, res, next) => {
     res.status(200).json(res.advancedResults);
