@@ -17,11 +17,13 @@ const JobSchema = new Schema({
     resume:{ type: String },
     attatchment:{ type: String },
     details:{ type: String },
-    date_applied: { type: Date, default: Date.now },
+    coverLetter: { type: String },
+    dateApplied: { type: Date, default: Date.now },
     status:{
         type: String,
-        enum: ['Pending','Approved', 'Shortlisted', 'Rejected'],
-        default: "Pending"
+        // enum: ['submitted','Approved', 'Shortlisted', 'Rejected'],
+        enum: ['submitted', 'reviewing', 'accepted', 'rejected'],
+        default: "submitted"
     },
     createdAt:{
       type: Date,
@@ -29,4 +31,4 @@ const JobSchema = new Schema({
     }
 })
 
-module.exports = mongoose.model('Request', JobSchema);
+module.exports = mongoose.model('Application', JobSchema);

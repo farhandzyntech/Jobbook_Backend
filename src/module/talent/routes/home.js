@@ -33,8 +33,9 @@ let routes = function(){
     routes.route("/jobs").get([protect], authorize('talent'), advancedResults(Job, {path: 'user', select: 'name' }), homeController.fetch);
     //--////////////////////////////////
     routes.route("/apply/:id").post([protect], authorize('talent'), upload.single('resume'), homeController.apply);
-    routes.route("/save/:id").post([protect], authorize('talent'), homeController.savedToggle);
+    routes.route("/toggleSaveJob/:id").post([protect], authorize('talent'), homeController.toggleSaveJob);
     // routes.route("/jobsfilter").get([protect], authorize('talent'), homeController.jobsfilter);
+    routes.route("/filterjobs").get([protect], authorize('talent'), homeController.filterjobs);
     //--////////////////////////////////
     return routes;
 };

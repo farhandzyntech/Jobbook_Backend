@@ -23,23 +23,23 @@ exports.signup = async (req, res, next) => {
     req.body.picture = (req.file) ? req.file.filename : "";
     const user = await User.create(req.body)
     
-    // grab token and send to email
-    const confirmEmailToken = user.generateEmailConfirmToken();
+    // // grab token and send to email
+    // const confirmEmailToken = user.generateEmailConfirmToken();
 
-    // Create reset url
-    const confirmEmailURL = `${req.protocol}://${req.get(
-      'host',
-    )}/api/v1/jobbook/auth/confirmemail?token=${confirmEmailToken}`;
+    // // Create reset url
+    // const confirmEmailURL = `${req.protocol}://${req.get(
+    //   'host',
+    // )}/api/v1/jobbook/auth/confirmemail?token=${confirmEmailToken}`;
 
-    const message = `You are receiving this email because you need to confirm your email address. Please make a GET request to: \n\n ${confirmEmailURL}`;
+    // const message = `You are receiving this email because you need to confirm your email address. Please make a GET request to: \n\n ${confirmEmailURL}`;
 
-    user.save({ validateBeforeSave: false });
+    // user.save({ validateBeforeSave: false });
 
-    const sendResult = await nodemailer.sendEmail({
-      email: user.email,
-      subject: 'Email confirmation token',
-      message,
-    });
+    // const sendResult = await nodemailer.sendEmail({
+    //   email: user.email,
+    //   subject: 'Email confirmation token',
+    //   message,
+    // });
     sendTokenResponse(user, 200, res);
   } catch (error) {
     console.error('ERROR', error)

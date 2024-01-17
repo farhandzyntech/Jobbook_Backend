@@ -61,6 +61,10 @@ const UserSchema = new Schema({
       to: Date,
       current: {type: Boolean, default: false}
     }],
+    // Jobs against this user have applied
+    appliedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Job', select: false }],
+    // Jobs which user have saved 
+    savedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Job', select: false }],
     otp: { type: String },
     status: { type: String },
     tokens: [

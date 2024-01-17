@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/1dd08d70-61d6-4dae-af44-5da801208696/resourceGroups/jobbookbackend_group/providers/Microsoft.Web/sites/jobbookbackend",
+    "appService.deploySubpath": "."
+}

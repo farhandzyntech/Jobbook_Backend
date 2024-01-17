@@ -30,19 +30,9 @@ const JobSchema = new Schema({
     experience: { type: String },
     picture: { type: String },
     // Users who have saved this job
-    // savedByUsers: [
-    //     {
-    //       type: mongoose.Schema.Types.ObjectId,
-    //       ref: 'User',
-    //     },
-    // ],
-    // // Users who have applied to this job
-    // appliedByUsers: [
-    //     {
-    //       type: mongoose.Schema.Types.ObjectId,
-    //       ref: 'User',
-    //     },
-    // ],
+    savedByUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', select: false }],
+    // Users who have applied to this job
+    appliedByUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', select: false }],
     status: {
         type: String,
         enum: ['Active', 'Closed', 'Expired'],
@@ -56,11 +46,11 @@ const JobSchema = new Schema({
 
 
 // Reverse populate with virtuals
-JobSchema.virtual('requests', {
-    ref: 'Request',
+JobSchema.virtual('applications', {
+    ref: 'Application',
     localField: '_id',
-    foreignField: 'job',
-    justOne: false
+    foreignField: 'Job',
+    justOne: false,
   });
 
 module.exports = mongoose.model('Job', JobSchema);
