@@ -26,6 +26,7 @@ const JobSchema = new Schema({
     },
     speciality: { type: String },
     category: { type: String },
+    title: { type: String },
     description: { type: String },
     experience: { type: String },
     picture: { type: String },

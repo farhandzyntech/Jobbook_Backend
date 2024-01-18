@@ -26,11 +26,9 @@ const { protect, authorize } = require('../../../middleware/auth');
 let routes = function(){
     let routes = express.Router({mergeParams: true});
     //--////////////////////////////////
-    routes.route("/news").get([protect], advancedResults(News, {path: 'user', select: 'name' }), homeController.fetchNews);
-    routes.route("/fourms").get([protect], advancedResults(Forum, {path: 'user', select: 'name' }), homeController.fetchForum);
-    //--////////////////////////////////
-    //--////////////////////////////////
-    routes.route("/jobs").get([protect], authorize('talent'), advancedResults(Job, {path: 'user', select: 'name' }), homeController.fetch);
+    routes.route("/news").get([protect], advancedResults(News, {path: 'user', select: 'name picture' }), homeController.fetchNews);
+    routes.route("/fourms").get([protect], advancedResults(Forum, {path: 'user', select: 'name picture' }), homeController.fetchForum);
+    routes.route("/jobs").get([protect], authorize('talent'), advancedResults(Job, {path: 'user', select: 'name picture' }), homeController.fetch);
     //--////////////////////////////////
     routes.route("/apply/:id").post([protect], authorize('talent'), upload.single('resume'), homeController.apply);
     routes.route("/toggleSaveJob/:id").post([protect], authorize('talent'), homeController.toggleSaveJob);
