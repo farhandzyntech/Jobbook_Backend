@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
     }
 })
 const upload = multer({ storage: storage });
-// //--////////////////////////////////
+//--////////////////////////////////
 //--////////////////////////////////
 const advancedResults = require('../../../middleware/advancedResults');
 const { protect, authorize } = require('../../../middleware/auth');
@@ -28,14 +28,10 @@ let routes = function(){
     //--////////////////////////////////
     routes.route("/news").get([protect], advancedResults(News, {path: 'user', select: 'name picture' }), homeController.fetchNews);
     routes.route("/fourms").get([protect], advancedResults(Forum, {path: 'user', select: 'name picture' }), homeController.fetchForum);
-    routes.route("/jobs").get([protect], authorize('talent'), advancedResults(Job, {path: 'user', select: 'name picture' }), homeController.fetch);
+    routes.route("/jobs").get([protect], authorize('talent'), homeController.fetchJobs);
     //--////////////////////////////////
     routes.route("/apply/:id").post([protect], authorize('talent'), upload.single('resume'), homeController.apply);
-    routes.route("/toggleSaveJob/:id").post([protect], authorize('talent'), homeController.toggleSaveJob);
-    // routes.route("/jobsfilter").get([protect], authorize('talent'), homeController.jobsfilter);
-    // routes.route("/filterjobs").get([protect], authorize('talent'), homeController.filterjobs);
-    routes.route("/fetchJobs").get([protect], authorize('talent'), homeController.fetchJobs);
-    routes.route("/fetchJobsFilter").get([protect], authorize('talent'), homeController.fetchJobsFilter);
+    routes.route("/saveToggle/:id").post([protect], authorize('talent'), homeController.saveToggle);
     //--////////////////////////////////
     return routes;
 };

@@ -12,12 +12,13 @@ const { protect, authorize } = require('../../../middleware/auth');
 let routes = function(){
     let routes = express.Router({mergeParams: true});
     //--////////////////////////////////
-    routes.route("/stats/:id").get([protect], authorize('company'), homeController.stats);
-    routes.route("/applicant/:id").get([protect], authorize('company'), homeController.applicant);
     routes.route("/news").get([protect], advancedResults(News, {path: 'user', select: 'name picture' }), homeController.fetchNews);
     routes.route("/fourms").get([protect], advancedResults(Forum, {path: 'user', select: 'name picture' }), homeController.fetchForum);
     routes.route("/jobs").get([protect], authorize('company'), advancedResults(Job, {path: 'user', select: 'name picture' }), homeController.fetchJobs);
-    routes.route("/jobsfilter").get([protect], authorize('company'), paginationResults(Job), homeController.jobsfilter);
+    routes.route("/stats/:id").get([protect], authorize('company'), homeController.stats);
+    routes.route("/applications/:id").get([protect], authorize('company'), homeController.applications);
+    routes.route("/applicationUpdate/:id").put([protect], authorize('company'), homeController.updateApplicationStatus);
+
     
     return routes;
 };

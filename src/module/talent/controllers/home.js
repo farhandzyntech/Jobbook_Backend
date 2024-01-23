@@ -13,53 +13,7 @@ exports.fetchNews = asyncHandler(async (req, res, next) => {
     res.status(200).json(res.advancedResults);
 });
 
-exports.fetch = asyncHandler(async (req, res, next) => {
-    res.status(200).json(res.advancedResults);
-});
-
 exports.fetchJobs = async (req, res, next) => {
-    // Assume the user is authenticated and their ID is available
-    const userId = req.user.id; // This should be set by your authentication middleware
-
-    try {
-        // Fetch the specific user with the populated 'appliedJobs' and 'savedJobs'
-        const userWithJobs = await User.findById(userId)
-            .populate('appliedJobs')
-            .populate('savedJobs');
-
-        // If the user is not found, send a 404 response
-        if (!userWithJobs) {
-            return res.status(404).send('User not found');
-        }
-
-        // Create a Set for quick lookup of IDs
-        const appliedJobIds = new Set(userWithJobs.appliedJobs.map(job => job._id.toString()));
-        const savedJobIds = new Set(userWithJobs.savedJobs.map(job => job._id.toString()));
-
-        // Fetch all jobs from the database
-        const allJobs = await Job.find();
-
-        // Map over allJobs to add 'applied' and 'saved' flags
-        const jobsWithFlags = allJobs.map(job => {
-            const jobObject = job.toObject();
-            jobObject.applied = appliedJobIds.has(job._id.toString());
-            jobObject.saved = savedJobIds.has(job._id.toString());
-            return jobObject;
-        });
-
-        // Send the modified job objects back in the response
-        // res.status(200).json(jobsWithFlags);
-        res.status(200).json({
-            success:true,
-            data: jobsWithFlags                                                       
-        })
-    } catch (error) {
-        console.error(error);
-        return next(error)
-    }
-}
-
-exports.fetchJobsFilter = async (req, res, next) => {
     const userId = req.user._id; // This should be set by your authentication middleware
     const { filter } = req.query; // Expected to be 'saved', 'applied', or not provided
 
@@ -68,7 +22,6 @@ exports.fetchJobsFilter = async (req, res, next) => {
             .populate(filter === 'applied' ? { path: "appliedJobs", populate:{ path:'user', select:"name picture" } } : '') // Populate only if filter is 'applied'
             .populate(filter === 'saved' ? { path: "savedJobs", populate:{ path:'user', select:"name picture" } } : ''); // Populate only if filter is 'saved'
 
-            console.log(userWithJobs);
         if (!userWithJobs) {
             return res.status(404).send('User not found');
         }
@@ -85,8 +38,7 @@ exports.fetchJobsFilter = async (req, res, next) => {
         }
         // If no filter is provided, return all jobs with flags
         else {
-            console.log("shiuseghuity3489t43y");
-             // Fetch the specific user with the populated 'appliedJobs' and 'savedJobs'
+            // Fetch the specific user with the populated 'appliedJobs' and 'savedJobs'
             const userWithJobs = await User.findById(userId)
             .populate('appliedJobs')
             .populate('savedJobs');
@@ -238,7 +190,7 @@ exports.apply = async (req, res, next)=>{
     }
 }
 
-exports.toggleSaveJob = async (req, res, next) => {
+exports.saveToggle = async (req, res, next) => {
     const jobId = req.params.id;
     const userId = req.user.id
     const { action } = req.body; // action can be 'save' or 'unsave'
@@ -267,39 +219,42 @@ exports.toggleSaveJob = async (req, res, next) => {
         await user.save();
         await job.save();
 
-        res.status(200).send(`Job ${action === 'save' ? 'saved' : 'unsaved'} successfully`);
+        res.status(200).send({
+            success:true,
+            message: `Job ${action === 'save' ? 'saved' : 'unsaved'} successfully`        
+        })
     } catch (error) {
         console.error(error);
         return next(error)
     }
 };
 
-exports.savedToggle = async (req, res, next)=>{
-    try {
-        const record = await Job.findById(req.params.id)
-        if(!record) return next(new ErrorResponse("No record found!", 400))
-        let request = await Saved.findOne({user: req.user.id, job: req.params.id})
-        if(!request){
-            //create a new request and save it in db
-            request = new Saved({ user: req.user.id, job: req.params.id })
-            await request.save();
-            //send response
-            res.status(200).json({
-                success:true,
-                data: request
-            })
-        }else {
-            await request.deleteOne({user: req.user.id, job: req.params.id});
-            res.status(200).json({
-                success:true,
-                data: request
-            })
-        }
-    } catch (error) {
-        console.error(error);
-        return next(error)
-    }
-}
+// exports.savedToggleOld = async (req, res, next)=>{
+//     try {
+//         const record = await Job.findById(req.params.id)
+//         if(!record) return next(new ErrorResponse("No record found!", 400))
+//         let request = await Saved.findOne({user: req.user.id, job: req.params.id})
+//         if(!request){
+//             //create a new request and save it in db
+//             request = new Saved({ user: req.user.id, job: req.params.id })
+//             await request.save();
+//             //send response
+//             res.status(200).json({
+//                 success:true,
+//                 data: request
+//             })
+//         }else {
+//             await request.deleteOne({user: req.user.id, job: req.params.id});
+//             res.status(200).json({
+//                 success:true,
+//                 data: request
+//             })
+//         }
+//     } catch (error) {
+//         console.error(error);
+//         return next(error)
+//     }
+// }
 
 // exports.jobsfilter = async (req, res, next)=>{
 //     try {
@@ -346,6 +301,48 @@ exports.savedToggle = async (req, res, next)=>{
 //                 data: request
 //             })
 //         }
+//     } catch (error) {
+//         console.error(error);
+//         return next(error)
+//     }
+// }
+
+// exports.oldfetchJobs = async (req, res, next) => {
+//     // Assume the user is authenticated and their ID is available
+//     const userId = req.user.id; // This should be set by your authentication middleware
+
+//     try {
+//         // Fetch the specific user with the populated 'appliedJobs' and 'savedJobs'
+//         const userWithJobs = await User.findById(userId)
+//             .populate('appliedJobs')
+//             .populate('savedJobs');
+
+//         // If the user is not found, send a 404 response
+//         if (!userWithJobs) {
+//             return res.status(404).send('User not found');
+//         }
+
+//         // Create a Set for quick lookup of IDs
+//         const appliedJobIds = new Set(userWithJobs.appliedJobs.map(job => job._id.toString()));
+//         const savedJobIds = new Set(userWithJobs.savedJobs.map(job => job._id.toString()));
+
+//         // Fetch all jobs from the database
+//         const allJobs = await Job.find();
+
+//         // Map over allJobs to add 'applied' and 'saved' flags
+//         const jobsWithFlags = allJobs.map(job => {
+//             const jobObject = job.toObject();
+//             jobObject.applied = appliedJobIds.has(job._id.toString());
+//             jobObject.saved = savedJobIds.has(job._id.toString());
+//             return jobObject;
+//         });
+
+//         // Send the modified job objects back in the response
+//         // res.status(200).json(jobsWithFlags);
+//         res.status(200).json({
+//             success:true,
+//             data: jobsWithFlags                                                       
+//         })
 //     } catch (error) {
 //         console.error(error);
 //         return next(error)

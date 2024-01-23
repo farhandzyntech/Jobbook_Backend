@@ -5,7 +5,7 @@ const advancedResults = (model, populate) => async (req, res, next) => {
     const reqQuery = { ...req.query };
   
     // Fields to exclude
-    const removeFields = ['select', 'sort', 'page', 'limit', 'id'];
+    const removeFields = ['select', 'sort', 'page', 'limit', 'id', 'userId'];
   
     // Loop over removeFields and delete them from reqQuery
     removeFields.forEach(param => delete reqQuery[param]);
@@ -18,6 +18,12 @@ const advancedResults = (model, populate) => async (req, res, next) => {
 
     // Finding resource
     query = model.find(JSON.parse(queryStr));
+
+    // Filter by userId if it's in the query
+    if(req.query.userId == "true"){
+      const userId = req.user.id;
+      query = query.where({ user: userId });
+    }
   
     // Select Fields
     if (req.query.select) {
@@ -82,4 +88,3 @@ const advancedResults = (model, populate) => async (req, res, next) => {
   };
   
   module.exports = advancedResults;
-  

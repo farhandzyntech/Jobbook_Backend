@@ -3,6 +3,18 @@ const Application = require('../../../schemas/Application');
 const Job = require('../../../schemas/Job');
 const ErrorResponse = require('../../../utils/errorResponse');
 
+exports.fetchForum = asyncHandler(async (req, res, next) => {
+    res.status(200).json(res.advancedResults);
+});
+
+exports.fetchNews = asyncHandler(async (req, res, next) => {
+    res.status(200).json(res.advancedResults);
+});
+
+exports.fetchJobs = asyncHandler(async (req, res, next) => {
+    res.status(200).json(res.advancedResults);
+});
+
 exports.stats = async (req, res, next)=>{
     try {
         let totalCount = await Application.countDocuments({job: req.params.id})
@@ -25,9 +37,9 @@ exports.stats = async (req, res, next)=>{
     }
 }
 
-exports.applicant = async (req, res, next)=>{
+exports.applications = async (req, res, next)=>{
     try {
-        let records = await Application.find({ job: req.params.id, status: (req.query.status) ? req.query.status : ['Pending', 'Shortlisted', 'Rejected'] })
+        let records = await Application.find({ job: req.params.id, status: (req.query.status) ? req.query.status : ['submitted', 'reviewing', 'accepted', 'rejected'] })
         .populate({path: 'job'}).populate({ path: 'user', select: 'id name email phone picture location address' })
         res.status(200).json({
             success:true,
@@ -39,24 +51,35 @@ exports.applicant = async (req, res, next)=>{
     }
 }
 
-exports.fetchForum = asyncHandler(async (req, res, next) => {
-    res.status(200).json(res.advancedResults);
-});
+exports.updateApplicationStatus = async (req, res, next)=>{
+    const applicationId = req.params.id;
+    const { status } = req.body; // Get application ID and new status from the request body
 
-exports.fetchNews = asyncHandler(async (req, res, next) => {
-    res.status(200).json(res.advancedResults);
-});
+    // List of valid statuses
+    const validStatuses = ['submitted', 'reviewing', 'accepted', 'rejected'];
 
-exports.fetchJobs = asyncHandler(async (req, res, next) => {
-    res.status(200).json(res.advancedResults);
-});
-
-exports.jobsfilter = async (req, res) => {
-    try {
-      // Fetch all jobs
-      res.model = Job; // Set the model for pagination middleware
-      res.json(res.paginatedResults);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
+    // Check if the new status is valid
+    if (!validStatuses.includes(status)) {
+        return next(new ErrorResponse('Invalid status', 400));
     }
-}
+
+    try {
+        // Find the job application and update its status
+        const updatedApplication = await Application.findByIdAndUpdate(
+            applicationId,
+            { status: status },
+            { new: true } // Return the updated document
+        );
+
+        if (!updatedApplication) {
+            return next(new ErrorResponse('Job Application not found', 404));
+        }
+        res.status(200).json({
+            success:true,
+            data: updatedApplication
+        })
+    } catch (error) {
+        console.error(error);
+        return next(error)
+    }
+};
