@@ -32,14 +32,13 @@ exports.fetchTalent = async (req, res, next) => {
 exports.stats = async (req, res, next)=>{
     try {
         let totalCount = await Application.countDocuments({job: req.params.id})
-        let pendingCount = await Application.countDocuments({status: "Pending", job: req.params.id})
-        let shortlistCount = await Application.countDocuments({status: "Shortlisted", job: req.params.id})
-        let rejectedCount = await Application.countDocuments({status: "Rejected", job: req.params.id})
+        let pendingCount = await Application.countDocuments({status: "pending", job: req.params.id})
+        let shortlistCount = await Application.countDocuments({status: "accepted", job: req.params.id})
+        let rejectedCount = await Application.countDocuments({status: "rejected", job: req.params.id})
         res.status(200).json({
             success:true,
             data: {
                 totalCount: totalCount,
-
                 pendingCount: pendingCount,
                 shortlistCount: shortlistCount,
                 rejectedCount: rejectedCount
