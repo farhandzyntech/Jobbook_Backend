@@ -472,7 +472,13 @@ exports.updateUserProfile = async (req, res, next) => {
     user.dob = req.body.dob || user.dob;
     user.address = req.body.address || user.address;
     user.picture = (req.file) ? req.file.filename : user.picture || "";
+    user.offers = req.body.offers || user.offers;
+    user.specialities = req.body.specialities || user.specialities;
+    user.experiencedIn = req.body.experiencedIn || user.experiencedIn;
+    user.level = req.body.level || user.level;
+    user.expectation = req.body.expectation || user.expectation;
     await user.save();
+    user.tokens = [];
     return  res.status(200).json({
       success: true,
       data: user,

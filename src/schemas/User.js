@@ -61,6 +61,11 @@ const UserSchema = new Schema({
       to: Date,
       current: {type: Boolean, default: false}
     }],
+    offers: {type: String},
+    specialities: {type: String},
+    experiencedIn: {type: String},
+    level:{type: String},
+    expectation: {type: String},
     // Jobs against this user have applied
     appliedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Job', select: false }],
     // Jobs which user have saved 
