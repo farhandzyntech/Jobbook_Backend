@@ -53,7 +53,7 @@ exports.stats = async (req, res, next)=>{
 
 exports.applications = async (req, res, next)=>{
     try {
-        let records = await Application.find({ job: req.params.id, status: (req.query.status) ? req.query.status : ['submitted', 'reviewing', 'accepted', 'rejected'] })
+        let records = await Application.find({ job: req.params.id, status: (req.query.status) ? req.query.status : ['pending', 'reviewing', 'accepted', 'rejected'] })
         .populate({path: 'job'}).populate({ path: 'user', select: 'id name email phone picture location address' })
         res.status(200).json({
             success:true,
@@ -70,7 +70,7 @@ exports.updateApplicationStatus = async (req, res, next)=>{
     const { status } = req.body; // Get application ID and new status from the request body
 
     // List of valid statuses
-    const validStatuses = ['submitted', 'reviewing', 'accepted', 'rejected'];
+    const validStatuses = ['pending', 'reviewing', 'accepted', 'rejected'];
 
     // Check if the new status is valid
     if (!validStatuses.includes(status)) {

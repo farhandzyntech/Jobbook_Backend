@@ -21,9 +21,9 @@ const JobSchema = new Schema({
     dateApplied: { type: Date, default: Date.now },
     status:{
         type: String,
-        // enum: ['submitted','Approved', 'Shortlisted', 'Rejected'],
-        enum: ['submitted', 'reviewing', 'accepted', 'rejected'],
-        default: "submitted"
+        // enum: ['pending','Approved', 'Shortlisted', 'Rejected'],
+        enum: ['pending', 'reviewing', 'accepted', 'rejected', 'expired'],
+        default: "pending"
     },
     createdAt:{
       type: Date,
