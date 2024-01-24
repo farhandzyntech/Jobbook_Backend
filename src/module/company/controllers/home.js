@@ -1,6 +1,7 @@
 const asyncHandler = require('../../../middleware/async');
 const Application = require('../../../schemas/Application');
 const Job = require('../../../schemas/Job');
+const User = require('../../../schemas/User');
 const ErrorResponse = require('../../../utils/errorResponse');
 
 exports.fetchForum = asyncHandler(async (req, res, next) => {
@@ -14,6 +15,19 @@ exports.fetchNews = asyncHandler(async (req, res, next) => {
 exports.fetchJobs = asyncHandler(async (req, res, next) => {
     res.status(200).json(res.advancedResults);
 });
+
+exports.fetchTalent = async (req, res, next) => {
+    try {
+        const records = await User.findOne().select("name email phone picture location experience");
+        res.status(200).json({
+            success:true,
+            data: records
+        })
+    } catch (error) {
+        console.log(error);
+        return next(error);
+    }
+}
 
 exports.stats = async (req, res, next)=>{
     try {

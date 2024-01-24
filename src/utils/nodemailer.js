@@ -21,5 +21,3 @@ exports.sendEmail = async (options) => {
 
   console.log('Message sent: %s', info.messageId);
 };
-
-// module.exports = sendEmail;
