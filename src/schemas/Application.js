@@ -24,11 +24,7 @@ const JobSchema = new Schema({
         // enum: ['pending','Approved', 'Shortlisted', 'Rejected'],
         enum: ['pending', 'reviewing', 'accepted', 'rejected', 'expired'],
         default: "pending"
-    },
-    createdAt:{
-      type: Date,
-      default: Date.now
     }
-})
+},{ timestamps: true })
 
 module.exports = mongoose.model('Application', JobSchema);

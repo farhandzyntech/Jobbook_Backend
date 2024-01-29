@@ -437,10 +437,24 @@ exports.logout = asyncHandler(async (req, res, next) => {
  */
 exports.getUserProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('name phone email dob address licence picture');
+    // const user = await User.findById(req.user.id).select('name phone email dob address licence picture appliedJobs.length');
+    const user = await User.aggregate([
+      { $match: { _id: req.user._id } },
+      { $project: {
+          name: 1,
+          phone: 1,
+          email: 1,
+          dob: 1,
+          address: 1,
+          licence: 1,
+          picture: 1,
+          appliedJobsCount: { $size: "$appliedJobs" }
+      }}
+  ]);
+  
     res.status(200).json({
       success: true,
-      data: user,
+      data: user
     });
   } catch (error) {
       console.error('ERROR', error)

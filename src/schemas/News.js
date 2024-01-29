@@ -23,11 +23,7 @@ const NewsSchema = new Schema({
         type: String,
         enum: ['0', '1'],
         default: "1"
-    },
-    createdAt:{
-      type: Date,
-      default: Date.now
     }
-})
+},{ timestamps: true })
 
 module.exports = mongoose.model('News', NewsSchema);

@@ -38,13 +38,8 @@ const JobSchema = new Schema({
         type: String,
         enum: ['Active', 'Closed', 'Expired'],
         default: "Active"
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now
     }
-})
-
+},{ timestamps: true })
 
 // Reverse populate with virtuals
 JobSchema.virtual('applications', {

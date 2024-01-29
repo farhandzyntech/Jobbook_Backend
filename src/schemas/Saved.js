@@ -17,10 +17,6 @@ const SaveSchema = new Schema({
         enum: ['0','1'],
         default: "1"
     },
-    createdAt:{
-      type: Date,
-      default: Date.now
-    }
-})
+},{ timestamps: true })
 
 module.exports = mongoose.model('Saved', SaveSchema);

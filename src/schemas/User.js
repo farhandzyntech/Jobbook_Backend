@@ -70,6 +70,10 @@ const UserSchema = new Schema({
     appliedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Job', select: false }],
     // Jobs which user have saved 
     savedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Job', select: false }],
+    // This field is only relevant for instructors
+    trainingsTeaching: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Training' }],
+    // This field is only relevant for students
+    trainingsEnrolled: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Training' }],
     otp: { type: String },
     status: { type: String },
     tokens: [
@@ -100,11 +104,7 @@ const UserSchema = new Schema({
     },
     device_type:{ type: String },
     device_token:{ type: String },
-    createdAt:{
-      type: Date,
-      default: Date.now
-    }
-})
+},{ timestamps: true })
 
 /**
  * Encrypts the password before saving it to the database.
@@ -117,7 +117,7 @@ UserSchema.pre('save', async function (next) {
   
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
-  });
+});
 
 
 /**
