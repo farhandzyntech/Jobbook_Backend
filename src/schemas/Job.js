@@ -15,8 +15,11 @@ const JobSchema = new Schema({
     },
     travel: { type: String },
     location: { type: String },
-    salary: {
-        type: String,
+    salMin: {
+        type: Number,
+    },
+    salMax: {
+        type:  Number,
     },
     salaryMode: {
         type: String,

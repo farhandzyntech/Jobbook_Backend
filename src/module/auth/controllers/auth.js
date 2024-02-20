@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const asyncHandler = require('../../../middleware/async');
 const nodemailer = require('../../../utils/nodemailer');
 const ErrorResponse = require('../../../utils/errorResponse');
+const { default: mongoose } = require('mongoose');
 
 //--//
 /**
@@ -448,7 +449,52 @@ exports.getUserProfile = async (req, res) => {
           address: 1,
           licence: 1,
           picture: 1,
+          location: 1,
+          about: 1,
+          skills: 1,
+          experience: 1,
+          offers: 1,
+          specialities: 1,
+          experiencedIn: 1,
+          level: 1,
+          expectation: 1,
+          status: 1,
           appliedJobsCount: { $size: "$appliedJobs" }
+      }}
+  ]);
+  
+    res.status(200).json({
+      success: true,
+      data: user
+    });
+  } catch (error) {
+      console.error('ERROR', error)
+  }
+}
+
+exports.userProfile = async (req, res) => {
+  try {
+    // const user = await User.findById(req.user.id).select('name phone email dob address licence picture appliedJobs.length');
+    const user = await User.aggregate([
+      { $match: { _id: (req.query.userId) ? new mongoose.Types.ObjectId(req.query.userId) : req.user._id } },
+      { $project: {
+          name: 1,
+          phone: 1,
+          email: 1,
+          dob: 1,
+          address: 1,
+          licence: 1,
+          picture: 1,
+          location: 1,
+          about: 1,
+          skills: 1,
+          experience: 1,
+          offers: 1,
+          specialities: 1,
+          experiencedIn: 1,
+          level: 1,
+          expectation: 1,
+          status: 1,
       }}
   ]);
   

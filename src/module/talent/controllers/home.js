@@ -5,7 +5,7 @@ const Job = require('../../../schemas/Job');
 const User = require('../../../schemas/User');
 const ErrorResponse = require('../../../utils/errorResponse');
 
-exports.fetchForum = asyncHandler(async (req, res, next) => {
+exports.fetchForum = asyncHandler(async (req, res, next) => { 
     res.status(200).json(res.advancedResults);
 });
 
@@ -15,7 +15,9 @@ exports.fetchNews = asyncHandler(async (req, res, next) => {
 
 exports.fetchJobs = async (req, res, next) => {
     const userId = req.user._id; // This should be set by your authentication middleware
+    let findFilter = {}
     const { filter } = req.query; // Expected to be 'saved', 'applied', or not provided
+    const { title, description, category, speciality, type, location, salMin, salMax } = req.query; // Expected to be string
 
     try {
         const userWithJobs = await User.findById(userId)
@@ -27,6 +29,45 @@ exports.fetchJobs = async (req, res, next) => {
         }
 
         let jobs = [];
+
+        if(title) {
+            findFilter.title = new RegExp(title, 'i')
+            // findFilter.push({ title: new RegExp(title, 'i') })
+        }
+
+        if(description){
+            findFilter.description = new RegExp(description, 'i')
+            // findFilter.push({ description: new RegExp(description, 'i') })
+        }
+
+        if(category){
+            findFilter.category = category
+            // findFilter.push({ category: new RegExp(category, 'i') })
+        }
+
+        if(speciality){
+            findFilter.speciality = speciality
+            // findFilter.push({ speciality: new RegExp(speciality, 'i') })
+        }
+
+        if(type){
+            findFilter.type = type
+            // findFilter.push({ type: new RegExp(type, 'i') })
+        }
+
+        if(location){
+            findFilter.location = location
+            // findFilter.push({ location: new RegExp(location, 'i') })
+        }
+
+        if(salMin){
+            findFilter.salMin =  { $gte: salMin }
+            // findFilter.push({ salMin: new RegExp(salMin, 'i') })
+        }
+        if(salMax){
+            findFilter.salMax = { $lte: salMax }
+            // findFilter.push({ salMax: new RegExp(salMax, 'i') })
+        }
 
         // If filter is set to 'applied', return only applied jobs
         if (filter === 'applied') {
@@ -53,7 +94,7 @@ exports.fetchJobs = async (req, res, next) => {
             const savedJobIds = new Set(userWithJobs.savedJobs.map(job => job._id.toString()));
 
             // Fetch all jobs from the database
-            const allJobs = await Job.find().populate({path: 'user', select: 'name picture'});
+            const allJobs = await Job.find(findFilter).populate({path: 'user', select: 'name picture'});
 
             // Map over allJobs to add 'applied' and 'saved' flags
             jobs = allJobs.map(job => {
@@ -228,123 +269,3 @@ exports.saveToggle = async (req, res, next) => {
         return next(error)
     }
 };
-
-// exports.savedToggleOld = async (req, res, next)=>{
-//     try {
-//         const record = await Job.findById(req.params.id)
-//         if(!record) return next(new ErrorResponse("No record found!", 400))
-//         let request = await Saved.findOne({user: req.user.id, job: req.params.id})
-//         if(!request){
-//             //create a new request and save it in db
-//             request = new Saved({ user: req.user.id, job: req.params.id })
-//             await request.save();
-//             //send response
-//             res.status(200).json({
-//                 success:true,
-//                 data: request
-//             })
-//         }else {
-//             await request.deleteOne({user: req.user.id, job: req.params.id});
-//             res.status(200).json({
-//                 success:true,
-//                 data: request
-//             })
-//         }
-//     } catch (error) {
-//         console.error(error);
-//         return next(error)
-//     }
-// }
-
-// exports.jobsfilter = async (req, res, next)=>{
-//     try {
-//         const { status } = req.query;
-
-//           let jobs;
-      
-//           switch (status) {
-//             case 'applied':
-//               jobs = await Job.find()
-//               break;
-//             case 'interviews':
-//               // Assuming there is a field in the Job schema to indicate scheduled interviews
-//               jobs = await Job.find({ interviewsScheduled: { $exists: true, $not: { $size: 0 } } }).exec();
-//               break;
-//             case 'closed':
-//               // Assuming there is a field in the Job schema to indicate closed jobs
-//               jobs = await Job.find({ closed: true }).exec();
-//               break;
-            
-//             default:
-//               res.status(400).json({ error: 'Invalid status parameter' });
-//               return;
-
-//           }
-
-
-//         const record = await Job.findById(req.params.id)
-//         if(!record) return next(new ErrorResponse("No record found!", 400))
-//         let request = await Saved.findOne({user: req.user.id, job: req.params.id})
-//         if(!request){
-//             //create a new request and save it in db
-//             request = new Saved({ user: req.user.id, job: req.params.id })
-//             await request.save();
-//             //send response
-//             res.status(200).json({
-//                 success:true,
-//                 data: request
-//             })
-//         }else {
-//             await request.deleteOne({user: req.user.id, job: req.params.id});
-//             res.status(200).json({
-//                 success:true,
-//                 data: request
-//             })
-//         }
-//     } catch (error) {
-//         console.error(error);
-//         return next(error)
-//     }
-// }
-
-// exports.oldfetchJobs = async (req, res, next) => {
-//     // Assume the user is authenticated and their ID is available
-//     const userId = req.user.id; // This should be set by your authentication middleware
-
-//     try {
-//         // Fetch the specific user with the populated 'appliedJobs' and 'savedJobs'
-//         const userWithJobs = await User.findById(userId)
-//             .populate('appliedJobs')
-//             .populate('savedJobs');
-
-//         // If the user is not found, send a 404 response
-//         if (!userWithJobs) {
-//             return res.status(404).send('User not found');
-//         }
-
-//         // Create a Set for quick lookup of IDs
-//         const appliedJobIds = new Set(userWithJobs.appliedJobs.map(job => job._id.toString()));
-//         const savedJobIds = new Set(userWithJobs.savedJobs.map(job => job._id.toString()));
-
-//         // Fetch all jobs from the database
-//         const allJobs = await Job.find();
-
-//         // Map over allJobs to add 'applied' and 'saved' flags
-//         const jobsWithFlags = allJobs.map(job => {
-//             const jobObject = job.toObject();
-//             jobObject.applied = appliedJobIds.has(job._id.toString());
-//             jobObject.saved = savedJobIds.has(job._id.toString());
-//             return jobObject;
-//         });
-
-//         // Send the modified job objects back in the response
-//         // res.status(200).json(jobsWithFlags);
-//         res.status(200).json({
-//             success:true,
-//             data: jobsWithFlags                                                       
-//         })
-//     } catch (error) {
-//         console.error(error);
-//         return next(error)
-//     }
-// }

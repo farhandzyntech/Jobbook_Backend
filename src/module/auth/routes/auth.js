@@ -38,6 +38,7 @@ let routes = function(){
     routes.route("/resetpassword/:resettoken").put(authController.resetPassword);
     //--////////////////////////////////
     routes.route("/profile").get([protect], authController.getUserProfile);
+    routes.route("/user-profile").get([protect], authController.userProfile);
     routes.route("/getAllUsers").get([protect], authController.getAllUsers);
     routes.route("/update-profile").put([protect], upload.single('picture'), authController.updateUserProfile);
     //--//
