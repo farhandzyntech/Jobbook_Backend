@@ -40,7 +40,12 @@ if (process.env.NODE_ENV === 'development') {
 app.use(mongoSanitize());
 
 // Set security headers
-app.use(helmet());
+// app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+  }),
+);
 
 // Prevent XSS attacks
 app.use(xss());
@@ -55,8 +60,24 @@ app.use(limiter);
 // Prevent http param pollution
 app.use(hpp());
 
-// Enable CORS
-app.use(cors());
+//--////////////////////////////////////////////////////////////////
+let whitelist = ['http://localhost:3000', 'https://jobbookdevelop.netlify.app', 'https://jobbookbackend.azurewebsites.net' ]
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Check if the origin is in the whitelist or if it's coming from Postman
+    if (
+      (whitelist.indexOf(origin) !== -1 || !origin) ||
+      (origin && origin.startsWith('postman'))
+    ) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+};
+app.use(cors(corsOptions));
+//--////////////////////////////////////////////////////////////////
 
 // Set static folder
 app.use(express.static(path.join(__dirname, 'uploads')));

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CV for <%= resume.name %></title>
+    <style>
+        /* Add your CSS styles here */
+    </style>
+</head>
+<body>
+    <h1><%= resume.name %></h1>
+    <p>Email: <%= resume.email %></p>
+    <p>Phone: <%= resume.phone %></p>
+    <h2>Skills</h2>
+    <ul>
+        <% resume.skills.forEach(function(skill) { %>
+            <li><%= skill %></li>
+        <% }); %>
+    </ul>
+    <h2>Experience</h2>
+    <% resume.experience.forEach(function(exp) { %>
+        <div>
+            <h3><%= exp.company %></h3>
+            <p><%= exp.position %></p>
+            <p><%= exp.from %> - <%= exp.to ? exp.to : 'Present' %></p>
+        </div>
+    <% }); %>
+</body>
+</html>

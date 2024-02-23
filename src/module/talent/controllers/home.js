@@ -3,7 +3,14 @@ const Application = require('../../../schemas/Application');
 const Saved = require('../../../schemas/Saved');
 const Job = require('../../../schemas/Job');
 const User = require('../../../schemas/User');
+const puppeteer = require('puppeteer');
+const ejs = require('ejs');
+const fs = require('fs');
+const path = require('path');
 const ErrorResponse = require('../../../utils/errorResponse');
+const renderToPDF = require('../../../utils/pdfGenerator'); 
+// '../utils/pdfGenerator';
+
 
 exports.fetchForum = asyncHandler(async (req, res, next) => { 
     res.status(200).json(res.advancedResults);
@@ -269,3 +276,13 @@ exports.saveToggle = async (req, res, next) => {
         return next(error)
     }
 };
+
+exports.generate = async (req, res, next) => {
+    const data = req.body; // Assuming JSON input
+    try {
+      const pdfPath = await renderToPDF.renderToPDF(data);
+      res.send({ message: 'PDF generated successfully.', path: pdfPath });
+    } catch (error) {
+      res.status(500).send({ message: 'Failed to generate PDF.', error: error.message });
+    }
+}

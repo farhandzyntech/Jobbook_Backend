@@ -18,7 +18,7 @@ exports.fetchJobs = asyncHandler(async (req, res, next) => {
 
 exports.fetchTalent = async (req, res, next) => {
     try {
-        const records = await User.find().select("name email phone picture location experience offers specialities experiencedIn level expectation");        
+        const records = await User.find().select("name email phone picture location skills experience offers specialities experiencedIn level expectation");        
         res.status(200).json({
             success:true,
             data: records
