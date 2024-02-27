@@ -158,6 +158,7 @@
       padding: 0 65px 86px;
       background: #fff;
       border-radius: 0px 15px 15px 0px;
+      height: 100%;
     }
 
     .cv_datl_main_right span {
@@ -256,6 +257,24 @@
       .cv_datl_main_right p {
         padding-top: 7px;
       }
+      .cv_right_botom_box_img_main_box{
+        background-image: url(./img1.png);
+        width: 120px;
+        height: 110px;
+        margin: auto;
+        background-repeat: no-repeat;
+        background-size: contain;
+
+      }
+      #cvboom_img2{
+        background-image: url(./img2.png);
+      }
+      #cvboom_img3{
+        background-image: url(./img3.png);
+      }
+      #cvboom_img4{
+        background-image: url(./img4.png);
+      }
     }
   </style>
   <body>
@@ -265,111 +284,55 @@
           <div class="col-5 col-sm-5 col-lg-4 p-0">
             <div class="cv_left_box_main">
               <div class="img_box"></div>
-              <h2>JOHNE BROWN</h2>
-              <p class="client-Name">CREATIVE DIRECTOR</p>
+              <h2><%= data.name %></h2>
+              <p class="client-Name"><%= data.occupation %></p>
               <div class="client-detl">
                 <h4>PROFILE</h4>
                 <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation lorem ipsum
-                  dolor sit amet, consectetur adipiscing
+                  <%= data.profile %>
                 </p>
               </div>
               <div class="client-detl">
                 <h4>CONTACT</h4>
                 <p class="m-0">ADDRESS</p>
                 <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation lorem ipsum
-                  dolor sit amet, consectetur adipiscing
+                  <%= data.address %>
                 </p>
                 <ul>
                   <li>
                     <a href="javascript:;"
-                      ><i class="fa-solid fa-phone"></i>+000000000000</a
+                      ><i class="fa-solid fa-phone"></i><%= data.phone %></a
                     >
                   </li>
                   <li>
                     <a href="javascript:;"
-                      ><i class="fa-solid fa-envelope"></i>info@demo.com</a
+                      ><i class="fa-solid fa-envelope"></i><%= data.email %></a
                     >
                   </li>
                   <li>
                     <a href="javascript:;"
-                      ><i class="fa-sharp fa-light fa-globe"></i>www.demo.com</a
+                      ><i class="fa-sharp fa-light fa-globe"></i><%= data.website %></a
                     >
                   </li>
                 </ul>
               </div>
               <div class="client-detl pt-0">
-                <h4>CONTACT</h4>
-                <div class="progrs_bar_box">
-                  <p>Report Writing</p>
-                  <div class="progress">
-                    <div
-                      class="progress-bar"
-                      role="progressbar"
-                      style="width: 85%"
-                      aria-valuenow="85"
-                      aria-valuemin="0"
-                      aria-valuemax="100"
-                    ></div>
+                <h4>SKILLS</h4>
+                <% data.skills.forEach(function(skill) { %>
+                  <div class="progrs_bar_box">
+                    <p><%= skill.name %></p>
+                    <div class="progress">
+                      <div
+                        class="progress-bar"
+                        role="progressbar"
+                        style="width:<%= skill.value %>%"
+                        aria-valuenow="<%= skill.value %>"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                      ></div>
+                    </div>
                   </div>
-                </div>
-                <div class="progrs_bar_box">
-                  <p>Communication</p>
-                  <div class="progress">
-                    <div
-                      class="progress-bar"
-                      role="progressbar"
-                      style="width: 70%"
-                      aria-valuenow="70"
-                      aria-valuemin="0"
-                      aria-valuemax="100"
-                    ></div>
-                  </div>
-                </div>
-                <div class="progrs_bar_box">
-                  <p>Presentation</p>
-                  <div class="progress">
-                    <div
-                      class="progress-bar"
-                      role="progressbar"
-                      style="width: 90%"
-                      aria-valuenow="90"
-                      aria-valuemin="0"
-                      aria-valuemax="100"
-                    ></div>
-                  </div>
-                </div>
-                <div class="progrs_bar_box">
-                  <p>Case Solving</p>
-                  <div class="progress">
-                    <div
-                      class="progress-bar"
-                      role="progressbar"
-                      style="width: 60%"
-                      aria-valuenow="60"
-                      aria-valuemin="0"
-                      aria-valuemax="100"
-                    ></div>
-                  </div>
-                </div>
-                <div class="progrs_bar_box pb-0">
-                  <p>Illustrator CC</p>
-                  <div class="progress">
-                    <div
-                      class="progress-bar"
-                      role="progressbar"
-                      style="width: 80%"
-                      aria-valuenow="80"
-                      aria-valuemin="0"
-                      aria-valuemax="100"
-                    ></div>
-                  </div>
-                </div>
+                <% }); %>
               </div>
             </div>
           </div>
@@ -378,151 +341,70 @@
               <div class="client-detl">
                 <h4>EDUCATION</h4>
                 <div class="cv_datl_main_right">
-                  <div class="inner_cv_right_098">
-                    <div class="text-end">
-                      <p>
-                        Lorem ipsum dolor sit,<br />
-                        adipiscing elit, sed
-                      </p>
-                      <span>2011 - 2014</span>
+                  <% data.education.forEach(function(edu) { %>
+                    <div class="row">
+                      <div class="col-5 text-end px-5">
+                        <p>
+                          <%= edu.name %>
+                        </p>
+                        <span><%= edu.from %> - <%= edu.to ? edu.to : 'Present' %></span>
+                      </div>
+                      <div class="col-7">
+                        <p>
+                          <%= edu.degree %>
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p>
-                        Lorem ipsum dolor sit amet, consectetur adipisc<br />ing
-                        elit, sed do eiusmod tempor<br />
-                        incididunt ut
-                      </p>
-                    </div>
-                  </div>
-                  <div class="inner_cv_right_098">
-                    <div class="text-end">
-                      <p>
-                        Lorem ipsum dolor sit,<br />
-                        adipiscing elit, sed
-                      </p>
-                      <span>2011 - 2014</span>
-                    </div>
-                    <div>
-                      <p>
-                        Lorem ipsum dolor sit amet, consectetur adipisc<br />ing
-                        elit, sed do eiusmod tempor<br />
-                        incididunt ut
-                      </p>
-                    </div>
-                  </div>
-                  <div class="inner_cv_right_098">
-                    <div class="text-end">
-                      <p>
-                        Lorem ipsum dolor sit,<br />
-                        adipiscing elit, sed
-                      </p>
-                      <span>2011 - 2014</span>
-                    </div>
-                    <div>
-                      <p>
-                        Lorem ipsum dolor sit amet, consectetur adipisc<br />ing
-                        elit, sed do eiusmod tempor<br />
-                        incididunt ut
-                      </p>
-                    </div>
-                  </div>
+                  <% }); %>
                 </div>
               </div>
               <div class="client-detl">
                 <h4>EXPERIENCE</h4>
                 <div class="cv_datl_main_right">
-                  <div class="inner_cv_right_098">
-                    <div class="text-end">
-                      <p>
-                        Lorem ipsum dolor sit,<br />
-                        adipiscing elit, sed
-                      </p>
-                      <span>2011 - 2014</span>
+                  <% data.experience.forEach(function(exp) { %>
+                    <div class="row">
+                      <div class="col-5 text-end px-5">
+                        <p>
+                          <%= exp.company %>
+                        </p>
+                        <span><%= exp.from %> - <%= exp.to ? exp.to : 'Present' %></span>
+                      </div>
+                      <div class="col-7">
+                        <p>
+                          <%= exp.position %>
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p>
-                        Lorem ipsum dolor sit amet, consectetur adipisc<br />ing
-                        elit, sed do eiusmod tempor<br />
-                        incididunt ut
-                      </p>
-                    </div>
-                  </div>
-                  <div class="inner_cv_right_098">
-                    <div class="text-end">
-                      <p>
-                        Lorem ipsum dolor sit,<br />
-                        adipiscing elit, sed
-                      </p>
-                      <span>2011 - 2014</span>
-                    </div>
-                    <div>
-                      <p>
-                        Lorem ipsum dolor sit amet, consectetur adipisc<br />ing
-                        elit, sed do eiusmod tempor<br />
-                        incididunt ut
-                      </p>
-                    </div>
-                  </div>
-                  <div class="inner_cv_right_098">
-                    <div class="text-end">
-                      <p>
-                        Lorem ipsum dolor sit,<br />
-                        adipiscing elit, sed
-                      </p>
-                      <span>2011 - 2014</span>
-                    </div>
-                    <div>
-                      <p>
-                        Lorem ipsum dolor sit amet, consectetur adipisc<br />ing
-                        elit, sed do eiusmod tempor<br />
-                        incididunt ut
-                      </p>
-                    </div>
-                  </div>
-                  <div class="inner_cv_right_098">
-                    <div class="text-end">
-                      <p>
-                        Lorem ipsum dolor sit,<br />
-                        adipiscing elit, sed
-                      </p>
-                      <span>2011 - 2014</span>
-                    </div>
-                    <div>
-                      <p>
-                        Lorem ipsum dolor sit amet, consectetur adipisc<br />ing
-                        elit, sed do eiusmod tempor<br />
-                        incididunt ut
-                      </p>
-                    </div>
-                  </div>
+                  <% }); %>
                 </div>
               </div>
               <div class="client-detl">
                 <h4>INTERESTS</h4>
                 <div class="cv_datl_main_right">
                   <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    lorem ipsum dolor sit amet, consectetur adipiscing
+                    <%= data.interest %>
                   </p>
                 </div>
                 <div class="cv_right_botom_box">
                   <div class="row align-items-center">
                     <div class="col-sm-3">
-                      <img src="img1.png" alt="" />
+                      <div class="cv_right_botom_box_img_main_box"></div>
+                      <!-- <img src="img1.png" alt="" /> -->
                       <p>Photo</p>
                     </div>
                     <div class="col-sm-3">
-                      <img src="img2.png" alt="" />
+                      <div class="cv_right_botom_box_img_main_box" id="cvboom_img2"></div>
+                      <!-- <img src="img2.png" alt="" /> -->
                       <p>Reading</p>
                     </div>
                     <div class="col-sm-3">
-                      <img src="img3.png" alt="" />
+                      <div class="cv_right_botom_box_img_main_box" id="cvboom_img3"></div>
+                      <!-- <img src="img3.png" alt="" /> -->
                       <p>Travel</p>
                     </div>
                     <div class="col-sm-3">
-                      <img src="img4.png" alt="" />
+                      <div class="cv_right_botom_box_img_main_box" id="cvboom_img4"></div>
+                      <!-- <img src="img4.png" alt="" /> -->
                       <p>Music</p>
                     </div>
                   </div>
