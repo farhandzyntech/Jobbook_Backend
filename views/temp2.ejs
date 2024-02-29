@@ -103,9 +103,6 @@
       font-weight: 500;
     }
     .cv_datl_main_right .d_flx_box {
-      display: flex;
-      justify-content: flex-start;
-      column-gap: 55px;
       padding-bottom: 50px;
     }
 
@@ -257,6 +254,7 @@
       }
       .flx_box_dot {
         column-gap: 25px;
+        align-items: center;
       }
       .flx_box_dot .dot {
         width: 40px;
@@ -267,9 +265,11 @@
       }
       .cv_right_box_main {
         border-radius: 0 !important;
+        height: 100% !important;
       }
       .cv2_left_box_main {
         border-radius: 0;
+        height: 100% !important;
       }
       .client-detl {
         padding-top: 100px !important;
@@ -316,21 +316,13 @@
               <div class="cv2_detail_box_main">
                 <div class="client-detl">
                   <h4>Education</h4>
-                  <p>
-                    2014 - 2016<br />
-                    Degree Name<br />
-                    University name here
-                  </p>
-                  <p>
-                    2010 - 2014<br />
-                    Degree Name<br />
-                    University name here
-                  </p>
-                  <p>
-                    2008 - 2010<br />
-                    Degree Name<br />
-                    University name here
-                  </p>
+                  <% data.education.forEach(function(edu) { %>
+                    <p>
+                      <%= edu.from %> - <%= edu.to ? edu.to : 'Present' %><br />
+                      <%= edu.degree %><br />
+                      <%= edu.name %>
+                    </p>
+                  <% }); %>
                 </div>
                 <div class="client-detl">
                   <h4>Contact</h4>
@@ -342,7 +334,7 @@
                     </li>
                     <li>
                       <a href="javascript:;"
-                        ><span>Email</span><br />yourname@gmail.com</a
+                        ><span>Email</span><br />mailto:yourname@gmail.com</a
                       >
                     </li>
                     <li>
@@ -377,49 +369,61 @@
               <div class="client-detl pt-2">
                 <h4>Experience</h4>
                 <div class="cv_datl_main_right">
-                  <div class="d_flx_box">
-                    <p>
-                      2020-Present<br />
-                      Company Name
-                    </p>
-                    <div>
-                      <span>Senior UX Designer</span>
+                  <div class="row d_flx_box">
+                    <div class="col-4">
                       <p>
-                        Lorem Ipsum is simply dummy text<br />
-                        offted the printing and typesetting<br />
-                        industry.
+                        2020-Present<br />
+                        Company Name
                       </p>
                     </div>
-                  </div>
-                  <div class="d_flx_box">
-                    <p>
-                      2017-2019<br />
-                      Company Name
-                    </p>
-                    <div>
-                      <span>Junior UX Designer</span>
-                      <p>
-                        Lorem Ipsum is simply dummy text<br />
-                        offted the printing and typesetting<br />
-                        industry.
-                      </p>
+                    <div class="col-8">
+                      <div>
+                        <span>Senior UX Designer</span>
+                        <p>
+                          Lorem Ipsum is simply dummy text<br />
+                          offted the printing and typesetting<br />
+                          industry.
+                        </p>
+                      </div>
                     </div>
                   </div>
-
-                  <div class="d_flx_box">
-                    <p>
-                      2015-2017<br />
-                      Company Name
-                    </p>
-                    <div>
-                      <span>UX Designer</span>
+                  <div class="row d_flx_box">
+                    <div class="col-4">
                       <p>
-                        Lorem Ipsum is simply dummy text<br />
-                        offted the printing and typesetting<br />
-                        industry.
+                        2020-Present<br />
+                        Company Name
                       </p>
                     </div>
+                    <div class="col-8">
+                      <div>
+                        <span>Junior UX Designer</span>
+                        <p>
+                          Lorem Ipsum is simply dummy text<br />
+                          offted the printing and typesetting<br />
+                          industry.
+                        </p>
+                      </div>
+                    </div>
                   </div>
+                  <div class="row d_flx_box">
+                    <div class="col-4">
+                      <p>
+                        2020-Present<br />
+                        Company Name
+                      </p>
+                    </div>
+                    <div class="col-8">
+                      <div>
+                        <span>UX Designer</span>
+                        <p>
+                          Lorem Ipsum is simply dummy text<br />
+                          offted the printing and typesetting<br />
+                          industry.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
                 </div>
               </div>
 

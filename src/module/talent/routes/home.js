@@ -34,6 +34,7 @@ let routes = function(){
     routes.route("/saveToggle/:id").post([protect], authorize('talent'), homeController.saveToggle);
     //--////////////////////////////////
     routes.route("/generate").get([protect], authorize('talent'), homeController.generate);
+    // routes.route("/generatePdf").get([protect], authorize('talent'), homeController.generatePdf);
     //--////////////////////////////////
     //--////////////////////////////////
     return routes;

@@ -9,6 +9,7 @@ const fs = require('fs');
 const path = require('path');
 const ErrorResponse = require('../../../utils/errorResponse');
 const renderToPDF = require('../../../utils/pdfGenerator'); 
+const renderToPDFNEW = require('../../../utils/newpdfGenerator'); 
 // '../utils/pdfGenerator';
 
 
@@ -281,8 +282,19 @@ exports.generate = async (req, res, next) => {
     const data = req.body; // Assuming JSON input
     try {
       const pdfPath = await renderToPDF.renderToPDF(data);
-      res.send({ message: 'PDF generated successfully.', path: pdfPath });
+      res.send({ message: 'PDF generated successfully.', path: pdfPath.substring(1) });
     } catch (error) {
       res.status(500).send({ message: 'Failed to generate PDF.', error: error.message });
     }
 }
+
+// exports.generatePdf = async (req, res, next) => {
+//     const data = req.body; // Assuming JSON input
+//     try {
+//       const pdfPath = await renderToPDFNEW.renderToPDF(data);
+//       console.log(pdfPath);
+//       res.json({ message: 'PDF generated successfully.', path: pdfPath });
+//     } catch (error) {
+//       res.status(500).send({ message: 'Failed to generate PDF.', error: error.message });
+//     }
+// }

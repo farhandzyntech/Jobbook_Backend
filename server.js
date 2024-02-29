@@ -61,7 +61,7 @@ app.use(limiter);
 app.use(hpp());
 
 //--////////////////////////////////////////////////////////////////
-let whitelist = ['http://localhost:3000', 'https://jobbookdevelop.netlify.app', 'https://jobbookbackend.azurewebsites.net' ]
+let whitelist = ['http://dzyntech-101:3000', 'http://localhost:3000', 'https://jobbookdevelop.netlify.app', 'https://jobbookbackend.azurewebsites.net', 'https://node.jobbooks.app', 'https://190a-2400-adc1-126-2d00-2160-11fb-5edf-aca6.ngrok-free.app']
 const corsOptions = {
   origin: function (origin, callback) {
     // Check if the origin is in the whitelist or if it's coming from Postman
@@ -81,7 +81,11 @@ app.use(cors(corsOptions));
 
 // Set static folder
 app.use(express.static(path.join(__dirname, 'uploads')));
-                                                                 
+                             
+app.get("/", function (req, res) {
+  console.log(req.hostname);
+  res.send();
+});
 // Mount routers
 app.use("/api/v1/jobbook", require("./src/module/auth")());
 app.use("/api/v1/jobbook/talent", require("./src/module/talent")());

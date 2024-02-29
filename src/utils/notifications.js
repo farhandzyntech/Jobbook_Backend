@@ -1,5 +1,6 @@
 const admin = require('firebase-admin');
 const serviceAccount = require('../../privatekey.json');
+// const notification = require('../schemas/notification')
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
