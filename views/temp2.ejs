@@ -30,6 +30,7 @@
     }
     .cv2_left_box_main {
       background: #f5f5f5;
+      height: 100% !important;
       color: #363636;
       border-radius: 50px 0px 0px 50px;
     }
@@ -103,9 +104,6 @@
       font-weight: 500;
     }
     .cv_datl_main_right .d_flx_box {
-      display: flex;
-      justify-content: flex-start;
-      column-gap: 55px;
       padding-bottom: 50px;
     }
 
@@ -120,6 +118,7 @@
       padding: 0 65px 86px;
       background: #fff;
       border-radius: 0px 15px 15px 0px;
+      height: 100% !important;
     }
 
     .cv_datl_main_right span {
@@ -187,9 +186,41 @@
       display: flex;
       column-gap: 50px;
     }
+    .progrs_bar_box {
+      display: flex;
+      justify-content: flex-start;
+      padding-right: 15px;
+      align-items: center;
+      padding-bottom: 20px;
+      gap: 50px;
+
+    }
+
+    .progress {
+      height: 10px;
+      width: 55% !important;
+      border-radius: 3px;
+    }
+
+    .progrs_bar_box p {
+      font-size: 12px;
+      margin: 0;
+    }
+
+    .progress-bar {
+      background-color: #efa03c;
+    }
   </style>
   <style>
     @media only screen and (min-width: 2480px) and (max-height: 3508px) {
+      .progrs_bar_box p {
+        font-size: 45px;
+      }
+      .progress {
+        height: 25px;
+        width: 45% !important;
+        border-radius: 3px;
+      }
       .top-border {
         height: 200px;
         border-radius: 0px 0px 0px 0px;
@@ -257,6 +288,7 @@
       }
       .flx_box_dot {
         column-gap: 25px;
+        align-items: center;
       }
       .flx_box_dot .dot {
         width: 40px;
@@ -267,9 +299,13 @@
       }
       .cv_right_box_main {
         border-radius: 0 !important;
+        height: 100% !important;
+        background: #fff;
       }
       .cv2_left_box_main {
         border-radius: 0;
+        height: 100% !important;
+        background: #f5f5f5;
       }
       .client-detl {
         padding-top: 100px !important;
@@ -287,6 +323,10 @@
       }
       .progrs_bar_box p {
         font-size: 45px;
+      }
+      .progrs_bar_box{
+        justify-content: flex-start;
+        gap: 50px;
       }
       .progress {
         height: 25px;
@@ -316,40 +356,32 @@
               <div class="cv2_detail_box_main">
                 <div class="client-detl">
                   <h4>Education</h4>
-                  <p>
-                    2014 - 2016<br />
-                    Degree Name<br />
-                    University name here
-                  </p>
-                  <p>
-                    2010 - 2014<br />
-                    Degree Name<br />
-                    University name here
-                  </p>
-                  <p>
-                    2008 - 2010<br />
-                    Degree Name<br />
-                    University name here
-                  </p>
+                  <% data.education.forEach(function(edu) { %>
+                    <p>
+                      <%= edu.from %> - <%= edu.to ? edu.to : 'Present' %><br />
+                      <%= edu.degree %><br />
+                      <%= edu.name %>
+                    </p>
+                  <% }); %>
                 </div>
                 <div class="client-detl">
                   <h4>Contact</h4>
                   <ul>
                     <li>
                       <a href="javascript:;"
-                        ><span>Phone</span><br />+000000000000</a
+                        ><span>Phone</span><br /><%= data.phone %>
+                      </p></a
                       >
                     </li>
                     <li>
                       <a href="javascript:;"
-                        ><span>Email</span><br />yourname@gmail.com</a
+                        ><span>Email</span><br /><%= data.email %></a
                       >
                     </li>
                     <li>
                       <a href="javascript:;"
                         ><span>Address</span><br />
-                        Your Street Address<br />
-                        Town/City, zipcode</a
+                        <%= data.address %></a
                       >
                     </li>
                   </ul>
@@ -360,89 +392,60 @@
           <div class="col-8 col-sm-8 col-lg-8 p-0">
             <div class="cv_right_box_main">
               <div class="client-detl">
-                <h1>David <br />Anderson</h1>
-                <span>UX Designer</span>
+                <h1><%= data.name %></h1>
+                <span><%= data.occupation %></span>
               </div>
               <div class="client-detl">
                 <h4>Profile</h4>
                 <div class="cv_datl_main_right_first_box">
                   <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit,<br />
-                    sed do eiusmod tempor incididunt ut labore et dolore<br />
-                    magna aliqua. Ut enim ad minim veniam, quis nostrud<br />
-                    exercitation ullamco laboris nisi ut aliquip
+                    <%= data.profile %>
                   </p>
                 </div>
               </div>
               <div class="client-detl pt-2">
                 <h4>Experience</h4>
                 <div class="cv_datl_main_right">
-                  <div class="d_flx_box">
-                    <p>
-                      2020-Present<br />
-                      Company Name
-                    </p>
-                    <div>
-                      <span>Senior UX Designer</span>
-                      <p>
-                        Lorem Ipsum is simply dummy text<br />
-                        offted the printing and typesetting<br />
-                        industry.
-                      </p>
+                  <% data.experience.forEach(function(exp) { %>
+                    <div class="row d_flx_box">
+                      <div class="col-4">
+                        <p>
+                          <%= exp.from %> - <%= exp.to ? exp.to : 'Present' %><br />
+                          <%= exp.company %>
+                        </p>
+                      </div>
+                      <div class="col-8">
+                        <div>
+                          <span><%= exp.position %></span>
+                          <p>
+                            <%= exp.about %>
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div class="d_flx_box">
-                    <p>
-                      2017-2019<br />
-                      Company Name
-                    </p>
-                    <div>
-                      <span>Junior UX Designer</span>
-                      <p>
-                        Lorem Ipsum is simply dummy text<br />
-                        offted the printing and typesetting<br />
-                        industry.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div class="d_flx_box">
-                    <p>
-                      2015-2017<br />
-                      Company Name
-                    </p>
-                    <div>
-                      <span>UX Designer</span>
-                      <p>
-                        Lorem Ipsum is simply dummy text<br />
-                        offted the printing and typesetting<br />
-                        industry.
-                      </p>
-                    </div>
-                  </div>
+                  <% }); %>
                 </div>
               </div>
 
               <div class="client-detl p-0">
                 <h4>Skills</h4>
-                <div class="main_dot_bx">
-                  <div class="cusom_radio_button">
-                    <p>Photoshop</p>
-                    <div class="flx_box_dot">
-                      <div class="dot"></div>
-                      <div class="dot"></div>
-                      <div class="dot"></div>
-                      <div class="dot"></div>
-                    </div>
-                  </div>
-                  <div class="cusom_radio_button">
-                    <p>InDesign</p>
-                    <div class="flx_box_dot">
-                      <div class="dot"></div>
-                      <div class="dot"></div>
-                      <div class="dot"></div>
-                      <div class="dot"></div>
-                    </div>
+                <div class="row">
+                  <div class="col-6">
+                    <% data.skills.forEach(function(skill) { %>
+                      <div class="progrs_bar_box">
+                        <p><%= skill.name %></p>
+                        <div class="progress">
+                          <div
+                            class="progress-bar"
+                            role="progressbar"
+                            style="width:<%= skill.value %>%"
+                            aria-valuenow="<%= skill.value %>"
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                          ></div>
+                        </div>
+                      </div>
+                    <% }); %>
                   </div>
                 </div>
               </div>

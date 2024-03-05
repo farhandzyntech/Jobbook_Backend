@@ -166,81 +166,45 @@
                 <div class="col-12 c4">
                     <div class="row">
                         <div class="heading col-12">
-                            <h1>WALDO SMITH</h1>
-                            <p>GENERAL MANAGER</p>
+                            <h1><%= data.firstName %> <%= data.lastName %></h1>
+                            <p><%= data.occupation %></p>
                         </div>
                         <div class="col-6">
                             <div class="cv4-left-box-main">
-                                <div class="cv4-left-about-single">
-                                    <h1>WORK EXPERIENCE</h1>
-                                    <h4>POSITION</h4>
-                                    <h5>COMPANY</h5>
-                                    <p>EDUCATION IS ANOTHER TERM FOR LEARNING OR DEVELOP- ING YOUR KNOWLEDGE AND SKILLS
-                                        TO
-                                        GET BETTER. THE METHODS OF EDUCATION COULD BE DONE BY DISCUSSION, STORYTELLING,
-                                        RESEARCH, READING, TUTORING, TRAINING, EXPERIENCES, AND TEACHING. NORMALLY
-                                        LEARNERS
-                                        CAN BE TAUGHT BY EDUCATORS SUCH AS TEACH- ERS, TRAINERS, OR THEMSELVES.</p>
-                                    <div class="cv4-left-box-main-year">
-                                        <span>2025-2026</span>
+                                <h1>WORK EXPERIENCE</h1>
+                                <% data.experience.forEach(function(exp) { %>
+                                    <div class="cv4-left-about-single">
+                                        
+                                        <h4><%= exp.position %></h4>
+                                        <h5><%= exp.company %></h5>
+                                        <p><%= exp.about %></p>
+                                        <div class="cv4-left-box-main-year">
+                                            <span><%= exp.from %> - <%= exp.to ? exp.to : 'Present' %></span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="cv4-left-about-single">
-                                    <h1>WORK EXPERIENCE</h1>
-                                    <h4>POSITION</h4>
-                                    <h5>COMPANY</h5>
-                                    <p>NORMALLY LEARNERS CAN BE TAUGHT BY EDUCATORS SUCH AS TEACHERS, TRAINERS, OR
-                                        THEMSELVES. THERE ARE 2 TYPES OF EDUCATION: FORMAL EDUCATION AND INFORMAL
-                                        EDUCATION. FORMAL EDUCA- TION NORMALLY TAKES PLACES IN SCHOOLS, UNIVERSITIES, OR
-                                        COLLEGES WITH MULTIPLE LEARNERS IN A CLASSROOM BEING TAUGHT BY CERTIFIED
-                                        TEACHERS OF THE SUBJECT. INFORMAL EDUCATION CAN BE IN PLACES SUCH AS HOMES,
-                                        OFFICES, PARKS, COMMUNITY CENTERS, AND MEDIA LABS. MANY LEARNERS WILL ALSO GET
-                                        THE BENEFIT OF SPEAKING AND INTERACTING WITH OTHERS, MANNERS, AND
-                                        CULTURALIZATION.</p>
-                                    <div class="cv4-left-box-main-year">
-                                        <span>2025-2026</span>
-                                    </div>
-                                </div>
-                                <div class="cv4-left-about-single">
-                                    <h1>WORK EXPERIENCE</h1>
-                                    <h4>POSITION</h4>
-                                    <h5>COMPANY</h5>
-                                    <p>EDUCATION IS NORMALLY DIVIDED INTO THE FOLLOWING STAGES: KINDERGARTEN OR
-                                        PRESCHOOL, PRIMARY SCHOOL, SECONDARY SCHOOL, HIGH SCHOOL, COLLEGE, AND
-                                        UNIVERSITY.</p>
-                                    <div class="cv4-left-box-main-year">
-                                        <span>2025-2026</span>
-                                    </div>
-                                </div>
+                                  <% }); %>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="cv4-left-contact">
                                 <h1>CONTACT</h1>
-                                <p>+00 123 4567890</p>
-                                <p>EXAMPLE@MAIL.COM</p>
-                                <p>WWW.EXAMPLE.COM</p>
-                                <p>123 STREET NAME, CITY NAME, STATE, COUNTRY, 12345</p>
+                                <p><%= data.phone %></p>
+                                <p><%= data.email %></p>
+                                <p><%= data.website %></p>
+                                <p><%= data.address %></p>
                             </div>
                             <div class="cv4-left-contact">
-                               <div class="cv4-left-education-about">
                                 <h1>EDUCATION</h1>
-                                <div class="listeducation">
-                                 <button class="listbox"></button>
-                                 <h5>MASTER'S DEGREE</h5>
-                                </div>
-                                <p>EDUCATION IS ANOTHER TERM FOR <br> LEARNING OR DEVELOPING YOUR <br> KNOWLEDGE AND SKILLS TO GET BETTER.</p>
-                               </div>
+                                <% data.education.forEach(function(edu) { %>
+                                    <div class="cv4-left-education-about">
+                                        <div class="listeducation">
+                                        <button class="listbox"></button>
+                                        <h5>MASTER'S DEGREE</h5>
+                                        </div>
+                                        <p>EDUCATION IS ANOTHER TERM FOR <br> LEARNING OR DEVELOPING YOUR <br> KNOWLEDGE AND SKILLS TO GET BETTER.</p>
+                                   </div>
+                                <% }); %>
                             </div>
-                            <div class="cv4-left-contact">
-                                <div class="cv4-left-education-about">
-                                 <div class="listeducation">
-                                  <button class="listbox"></button>
-                                  <h5>BACHELOR'S DEGREE</h5>
-                                 </div>
-                                 <p>EDUCATION IS ANOTHER TERM FOR <br> LEARNING OR DEVELOPING YOUR <br> KNOWLEDGE AND SKILLS TO GET BETTER.</p>
-                                </div>
-                             </div>
                              <div class="cv4-left-contact">
                                  <h1>SKILLS</h1>
                                  <div class="listeducation-diff-last">
