@@ -288,13 +288,13 @@ exports.generate = async (req, res, next) => {
     }
 }
 
-// exports.generatePdf = async (req, res, next) => {
-//     const data = req.body; // Assuming JSON input
-//     try {
-//       const pdfPath = await renderToPDFNEW.renderToPDF(data);
-//       console.log(pdfPath);
-//       res.json({ message: 'PDF generated successfully.', path: pdfPath });
-//     } catch (error) {
-//       res.status(500).send({ message: 'Failed to generate PDF.', error: error.message });
-//     }
-// }
+exports.generatePdf = async (req, res, next) => {
+    const data = req.body; // Assuming JSON input
+    try {
+      const pdfPath = await renderToPDFNEW.renderToPDF(data);
+      console.log(pdfPath);
+      res.json({ message: 'PDF generated successfully.', path: pdfPath });
+    } catch (error) {
+      res.status(500).send({ message: 'Failed to generate PDF.', error: error.message });
+    }
+}

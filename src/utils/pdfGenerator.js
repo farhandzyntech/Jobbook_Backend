@@ -10,7 +10,19 @@ exports.renderToPDF = async (data) => {
   // Launch puppeteer browser with bundled Chromium
   // const browser = await puppeteer.launch({executablePath: puppeteer.executablePath()});
   const browser = await puppeteer.launch({
-    // args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    headless: true,
+    // args: [
+    //     '--no-sandbox',
+    //     '--disable-setuid-sandbox',
+    //     '--disable-dev-shm-usage',
+    //     '--disable-accelerated-2d-canvas',
+    //     '--no-first-run',
+    //     '--no-zygote',
+    //     '--single-process', // <- this one doesn't work on Windows
+    //     '--disable-gpu',
+    //     '--disable-extensions'
+    // ],
     executablePath: puppeteer.executablePath()
   });
   const page = await browser.newPage();
@@ -28,9 +40,19 @@ exports.renderToPDF = async (data) => {
   const pdfPath = `./uploads/pdfs/${uniqueFileName}`;
 
   await page.pdf({ 
-    path: pdfPath, 
-    printBackground: true, 
+    // path: pdfPath, 
+    // printBackground: true, 
+    // pageRanges: '1',
+    // width: 2480,
+    // height: 3508,
+    // preferCSSPageSize: false,
+
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    path: `./uploads/pdfs/${data.temp}-${Date.now()}.pdf`,
+    displayHeaderFooter: false,
+    printBackground: true,
     pageRanges: '1',
+    format: 'A4',
     width: 2480,
     height: 3508,
     preferCSSPageSize: false
