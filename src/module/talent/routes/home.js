@@ -30,10 +30,13 @@ let routes = function(){
     routes.route("/fourms").get([protect], advancedResults(Forum, {path: 'user', select: 'name picture' }), homeController.fetchForum);
     routes.route("/jobs").get([protect], authorize('talent'), homeController.fetchJobs);
     //--////////////////////////////////
+    routes.route("/notifications").get([protect], authorize('talent'), homeController.notifications);
+    routes.route("/read").get([protect], authorize('talent'), homeController.read);
+    //--////////////////////////////////
     routes.route("/apply/:id").post([protect], authorize('talent'), upload.single('resume'), homeController.apply);
     routes.route("/saveToggle/:id").post([protect], authorize('talent'), homeController.saveToggle);
     //--////////////////////////////////
-    routes.route("/generate").get([protect], authorize('talent'), homeController.generate);
+    routes.route("/generate").post([protect], authorize('talent'), homeController.generate);
     routes.route("/generatePdf").get([protect], authorize('talent'), homeController.generatePdf);
     //--////////////////////////////////
     //--////////////////////////////////

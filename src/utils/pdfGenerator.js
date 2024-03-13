@@ -27,7 +27,10 @@ exports.renderToPDF = async (data) => {
   });
   const page = await browser.newPage();
 
-  await page.setViewport({width: 2490, height: 3508});
+  const A4WidthPixels = 2480;
+  const A4HeightPixels = 3508;
+
+  await page.setViewport({ width: A4WidthPixels, height: A4HeightPixels });
   await page.setContent(htmlContent, {
     waitUntil: 'networkidle2'
   });
@@ -47,15 +50,14 @@ exports.renderToPDF = async (data) => {
     // height: 3508,
     // preferCSSPageSize: false,
 
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    path: `./uploads/pdfs/${data.temp}-${Date.now()}.pdf`,
+    path: pdfPath,
     displayHeaderFooter: false,
     printBackground: true,
+    width: `${A4WidthPixels}px`,
+    height: `${A4HeightPixels}px`,
+    // format: "A4",
     pageRanges: '1',
-    format: 'A4',
-    width: 2480,
-    height: 3508,
-    preferCSSPageSize: false
+    preferCSSPageSize: true,
   });
 
   await browser.close();

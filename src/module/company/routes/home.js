@@ -20,7 +20,10 @@ let routes = function(){
     routes.route("/stats/:id").get([protect], authorize('company'), homeController.stats);
     routes.route("/applications/:id").get([protect], authorize('company'), homeController.applications);
     routes.route("/applicationUpdate/:id").put([protect], authorize('company'), homeController.updateApplicationStatus);
-
+    //--////////////////////////////////
+    routes.route("/notifications").get([protect], authorize('company'), homeController.notifications);
+    routes.route("/read").get([protect], authorize('company'), homeController.read);
+    //--////////////////////////////////
     
     return routes;
 };

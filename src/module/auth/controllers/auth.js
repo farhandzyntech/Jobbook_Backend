@@ -15,6 +15,7 @@ const { default: mongoose } = require('mongoose');
  */
 exports.signup = async (req, res, next) => {
   try {
+    const device_token = req.body.device_token
     // Check if the email is already registered
     const existingUser = await User.findOne({ email: req.body.email });
     if (existingUser) {
@@ -41,7 +42,7 @@ exports.signup = async (req, res, next) => {
     //   subject: 'Email confirmation token',
     //   message,
     // });
-    sendTokenResponse(user, 200, res);
+    sendTokenResponse(user, 200, res, device_token);
   } catch (error) {
     console.error('ERROR', error)
     return next(error);
@@ -216,7 +217,7 @@ exports.signupApple = async (req, res, next) => {
  */
 exports.login = async (req, res, next) => {
   try {
-    const { username, password, socialId } = req.body;
+    const { username, password, socialId, device_token } = req.body;
 
     // Validate email and password
     if (!username || !password) return next(new ErrorResponse('Please provide an email and password', 400));
@@ -233,14 +234,14 @@ exports.login = async (req, res, next) => {
       return next(new ErrorResponse('Invalid credentials', 401));
     }
 
-    if(user && socialId) { sendTokenResponse(user, 200, res); }
+    if(user && socialId) { sendTokenResponse(user, 200, res, device_token); }
 
     // Check if password matches
     const isMatch = await user.matchPassword(password);
     if (!isMatch) {
       return next(new ErrorResponse('Invalid credentials', 401));
     }
-    sendTokenResponse(user, 200, res);
+    sendTokenResponse(user, 200, res, device_token);
     
     // // Get token
     // const token = user.getSignedJwtToken();
@@ -722,9 +723,10 @@ exports.confirmEmail = asyncHandler(async (req, res, next) => {
 });
 
 // Get token from model, create cookie and send response
-const sendTokenResponse = async (user, statusCode, res) => {
+const sendTokenResponse = async (user, statusCode, res, device_token) => {
     // Create token
-    const token = await user.getSignedJwtToken();
+    // const device_token = "q93744376b76785n8"
+    const token = await user.getSignedJwtToken(device_token);
     res.status(statusCode).cookie('token', token).json({
       success: true,
       token,

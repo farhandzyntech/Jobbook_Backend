@@ -82,6 +82,7 @@ const UserSchema = new Schema({
           type: String,
           required: true,
         },
+        device_token:{ type: String }
       },
     ],
     resetPasswordToken: {type: String},
@@ -103,7 +104,6 @@ const UserSchema = new Schema({
       default: false,
     },
     device_type:{ type: String },
-    device_token:{ type: String },
 },{ timestamps: true })
 
 /**
@@ -124,10 +124,10 @@ UserSchema.pre('save', async function (next) {
  * Sign JWT and return
  * @returns {string} JWT token
  */
-UserSchema.methods.getSignedJwtToken = async function () {
+UserSchema.methods.getSignedJwtToken = async function (device_token) {
   const token = jwt.sign({ _id: this._id.toString() }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
   // this.tokens = { token };
-  this.tokens = this.tokens.concat({ token });
+  this.tokens = this.tokens.concat({ token, device_token });
   await this.save();
   return token;
 };

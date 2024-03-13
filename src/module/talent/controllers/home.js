@@ -1,15 +1,13 @@
 const asyncHandler = require('../../../middleware/async');
 const Application = require('../../../schemas/Application');
+const Notification = require('../../../schemas/Notification');
 const Saved = require('../../../schemas/Saved');
 const Job = require('../../../schemas/Job');
 const User = require('../../../schemas/User');
-const puppeteer = require('puppeteer');
-const ejs = require('ejs');
-const fs = require('fs');
-const path = require('path');
 const ErrorResponse = require('../../../utils/errorResponse');
 const renderToPDF = require('../../../utils/pdfGenerator'); 
 const renderToPDFNEW = require('../../../utils/newpdfGenerator'); 
+const notification = require('../../../utils/notifications');
 // '../utils/pdfGenerator';
 
 
@@ -206,31 +204,55 @@ exports.apply = async (req, res, next)=>{
     const userId = req.user.id
     const jobId = req.params.id
     try {
-        // Check if the job application already exists
+        // // Check if the job application already exists
         const existingApplication = await Application.findOne({ user: userId, job: jobId });
         if (existingApplication) {
             return next(new ErrorResponse('You have already applied for this job', 409));
         }
 
-        // Create a new job application
+        // // Create a new job application
         const newApplication = new Application({
             job: jobId,
             user: userId,
             ...req.body
         });
 
-        // Save the new job application
+        // // Save the new job application
         const app = await newApplication.save();
 
-        // Update the user's appliedJobs
-        await User.findByIdAndUpdate(userId, { $addToSet: { appliedJobs: jobId } });
+        if(app){
+            // Update the user's appliedJobs
+            await User.findByIdAndUpdate(userId, { $addToSet: { appliedJobs: jobId } });
 
-        // Update the job's appliedByUsers
-        await Job.findByIdAndUpdate(jobId, { $addToSet: { appliedByUsers: userId } });
+            // Update the job's appliedByUsers
+            const job = await Job.findByIdAndUpdate(jobId, { $addToSet: { appliedByUsers: userId } }).populate({path: 'user', select: 'tokens'});
+            // console.log(job);
+            const deviceTokens = job.user.tokens.map(obj => obj.device_token).filter(token => token !== undefined);
+            const myDeviceTokens = req.user.tokens.map(obj => obj.device_token).filter(token => token !== undefined);
+            //send notification
+            const notificationBody1 = {
+                fromUserId: req.user.id, 
+                toUserId: job.user.id, 
+                job: jobId, 
+                deviceTokens,
+                title: 'New Job Added',
+                body: `New Job Application from ${req.user.name}`,
+            }
+            notification.sendPushNotification(notificationBody1);
+            const notificationBody2 = {
+                fromUserId: null, 
+                toUserId: req.user.id, 
+                job: jobId, 
+                deviceTokens: myDeviceTokens,
+                title: 'Job Application Submitted',
+                body: `You have successfully submitted the job application`,
+            }
+            notification.sendPushNotification(notificationBody2);
+        }
 
         res.status(200).send({
             success:true,
-            data: app                                                       
+            data: app                                                      
         })
         // res.status(201).send('Successfully applied to the job.');
     }catch (error) {
@@ -281,6 +303,9 @@ exports.saveToggle = async (req, res, next) => {
 exports.generate = async (req, res, next) => {
     const data = req.body; // Assuming JSON input
     try {
+        req.body.skills = (req.body.skills) ? JSON.parse(req.body.skills) : []
+        req.body.education = (req.body.education) ? JSON.parse(req.body.education) : []
+        req.body.experience = (req.body.experience) ? JSON.parse(req.body.experience) : []
       const pdfPath = await renderToPDF.renderToPDF(data);
       res.send({ message: 'PDF generated successfully.', path: pdfPath.substring(1) });
     } catch (error) {
@@ -296,5 +321,36 @@ exports.generatePdf = async (req, res, next) => {
       res.json({ message: 'PDF generated successfully.', path: pdfPath });
     } catch (error) {
       res.status(500).send({ message: 'Failed to generate PDF.', error: error.message });
+    }
+}
+
+exports.notifications = async (req, res, next) => {
+    try{
+        const notification = await Notification.find({to: req.user.id});
+        const unReadCount = await Notification.countDocuments({to: req.user.id, read: '0'}) 
+        res.status(200).json({
+            success: true,
+            data: {
+                unReadCount,
+                notification
+            }                                                       
+        })
+    } catch (error) {
+        console.error(error);
+        return next(error)
+    }
+}
+
+exports.read = async (req, res, next) => {
+    try{
+        const notification = await Notification.updateMany({to: req.user.id}, { read: '1' });
+
+        res.status(200).json({
+            success: true,
+            // data: notification                                                       
+        })
+    } catch (error) {
+        console.error(error);
+        return next(error)
     }
 }

@@ -1,18 +1,27 @@
 const mongoose = require('mongoose')
 const { Schema } = mongoose
 
-const SaveSchema = new Schema({
+const NotificationSchema = new Schema({
     from: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
-        required: true,
+        // required: true,
     },
     to: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
         required: true,
     },
+    job: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Job',
+        required: true,
+    },
     type: {
+        type: String, //e.g., 'jobApplication', 'jobAcceptance', 'jobRejection'
+        required: false
+    },
+    title: {
         type: String, //e.g., 'jobApplication', 'jobAcceptance', 'jobRejection'
         required: true
     },
@@ -32,4 +41,4 @@ const SaveSchema = new Schema({
     },
 },{ timestamps: true })
 
-module.exports = mongoose.model('Saved', SaveSchema);
+module.exports = mongoose.model('Notification', NotificationSchema);

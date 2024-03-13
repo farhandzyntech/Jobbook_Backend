@@ -1,8 +1,11 @@
+const { request } = require('express');
 const asyncHandler = require('../../../middleware/async');
 const Application = require('../../../schemas/Application');
+const Notification = require('../../../schemas/Notification');
 const Job = require('../../../schemas/Job');
 const User = require('../../../schemas/User');
 const ErrorResponse = require('../../../utils/errorResponse');
+const notification = require('../../../utils/notifications');
 
 exports.fetchForum = asyncHandler(async (req, res, next) => {
     res.status(200).json(res.advancedResults);
@@ -87,6 +90,19 @@ exports.updateApplicationStatus = async (req, res, next)=>{
         if (!updatedApplication) {
             return next(new ErrorResponse('Job Application not found', 404));
         }
+
+        const user = await User.findById(updatedApplication.user).select('name, tokens')
+        const tokens = user.tokens.map(obj => obj.device_token).filter(token => token !== undefined);
+        const notificationBody = {
+            fromUserId: req.user.id, 
+            toUserId: updatedApplication.user, 
+            job: updatedApplication.job, 
+            deviceTokens: tokens,
+            title: `Job Application ${status}`,
+            body: `Your job application is ${status} by company`,
+        }
+        notification.sendPushNotification(notificationBody);
+
         res.status(200).json({
             success:true,
             data: updatedApplication
@@ -96,3 +112,35 @@ exports.updateApplicationStatus = async (req, res, next)=>{
         return next(error)
     }
 };
+
+
+exports.notifications = async (req, res, next) => {
+    try{
+        const notification = await Notification.find({to: req.user.id});
+        const unReadCount = await Notification.countDocuments({to: req.user.id, read: '0'}) 
+        res.status(200).json({
+            success: true,
+            data: {
+                unReadCount,
+                notification
+            }                                                       
+        })
+    } catch (error) {
+        console.error(error);
+        return next(error)
+    }
+}
+
+exports.read = async (req, res, next) => {
+    try{
+        const notification = await Notification.updateMany({to: req.user.id}, { read: '1' });
+
+        res.status(200).json({
+            success: true,
+            // data: notification                                                       
+        })
+    } catch (error) {
+        console.error(error);
+        return next(error)
+    }
+}

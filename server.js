@@ -53,7 +53,7 @@ app.use(xss());
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 mins
-  max: 100
+  max: 1000
 });
 app.use(limiter);
 
@@ -61,7 +61,7 @@ app.use(limiter);
 app.use(hpp());
 
 //--////////////////////////////////////////////////////////////////
-let whitelist = ['http://dzyntech-101:3000', 'http://localhost:3000', 'https://jobbookdevelop.netlify.app', 'https://jobbookbackend.azurewebsites.net', 'https://node.jobbooks.app', 'https://190a-2400-adc1-126-2d00-2160-11fb-5edf-aca6.ngrok-free.app']
+let whitelist = ['http://dzyntech-101:3000', 'http://localhost:3000', 'https://jobbookdevelop.netlify.app', 'https://jobbookbackend.azurewebsites.net', 'https://node.jobbooks.app', 'https://4b75-2400-adc1-126-2d00-ade8-4b9f-8faa-df73.ngrok-free.app']
 const corsOptions = {
   origin: function (origin, callback) {
     // Check if the origin is in the whitelist or if it's coming from Postman
