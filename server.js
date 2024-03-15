@@ -11,6 +11,8 @@ const rateLimit = require('express-rate-limit');
 const hpp = require('hpp');
 const cors = require('cors');
 
+const { initSocket } = require('./src/utils/socket')
+
 //Load env
 require('dotenv').config()
 // console.log(process.env)
@@ -90,6 +92,7 @@ app.get("/", function (req, res) {
 app.use("/api/v1/jobbook", require("./src/module/auth")());
 app.use("/api/v1/jobbook/talent", require("./src/module/talent")());
 app.use("/api/v1/jobbook/company", require("./src/module/company")());
+app.use("/api/v1/jobbook/chat", require("./src/module/chatbot")());
 
 //--//
 app.use(errorHandler);
@@ -102,6 +105,13 @@ const server = app.listen(PORT, () => {
     )
   }
 );
+
+// socket.io
+var corsOptionsSockets = {
+  origin: 'http://localhost:3000',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+initSocket(server, corsOptionsSockets)
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {
