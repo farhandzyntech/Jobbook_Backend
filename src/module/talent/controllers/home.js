@@ -121,6 +121,63 @@ exports.fetchJobs = async (req, res, next) => {
     }
 }
 
+exports.allJobs = async (req, res, next) => {
+    let findFilter = {}
+    const { title, description, category, speciality, type, location, salMin, salMax } = req.query; // Expected to be string
+
+    try {
+        if(title) {
+            findFilter.title = new RegExp(title, 'i')
+            // findFilter.push({ title: new RegExp(title, 'i') })
+        }
+
+        if(description){
+            findFilter.description = new RegExp(description, 'i')
+            // findFilter.push({ description: new RegExp(description, 'i') })
+        }
+
+        if(category){
+            findFilter.category = category
+            // findFilter.push({ category: new RegExp(category, 'i') })
+        }
+
+        if(speciality){
+            findFilter.speciality = speciality
+            // findFilter.push({ speciality: new RegExp(speciality, 'i') })
+        }
+
+        if(type){
+            findFilter.type = type
+            // findFilter.push({ type: new RegExp(type, 'i') })
+        }
+
+        if(location){
+            findFilter.location = location
+            // findFilter.push({ location: new RegExp(location, 'i') })
+        }
+
+        if(salMin){
+            findFilter.salMin =  { $gte: salMin }
+            // findFilter.push({ salMin: new RegExp(salMin, 'i') })
+        }
+        if(salMax){
+            findFilter.salMax = { $lte: salMax }
+            // findFilter.push({ salMax: new RegExp(salMax, 'i') })
+        }
+
+        // Fetch all jobs from the database
+        const allJobs = await Job.find(findFilter).populate({path: 'user', select: 'name picture'});
+    
+        res.status(200).json({
+            success: true,
+            data: allJobs                                                       
+        })
+    } catch (error) {
+        console.error(error);
+        return next(error)
+    }
+}
+
 exports.filterjobs = asyncHandler(async (req, res, next) => {
 try {
     const userId = req.user.id
@@ -240,7 +297,7 @@ exports.apply = async (req, res, next)=>{
             }
             notification.sendPushNotification(notificationBody1);
             const notificationBody2 = {
-                fromUserId: null, 
+                fromUserId: job.user.id, 
                 toUserId: req.user.id, 
                 job: jobId, 
                 deviceTokens: myDeviceTokens,
@@ -326,7 +383,9 @@ exports.generatePdf = async (req, res, next) => {
 
 exports.notifications = async (req, res, next) => {
     try{
-        const notification = await Notification.find({to: req.user.id});
+        const notification = await Notification.find({to: req.user.id})
+        .populate({ path: 'from', select:'name picture'})
+        .populate({ path: 'to', select:'name picture'});
         const unReadCount = await Notification.countDocuments({to: req.user.id, read: '0'}) 
         res.status(200).json({
             success: true,

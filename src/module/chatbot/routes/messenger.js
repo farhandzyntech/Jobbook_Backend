@@ -19,7 +19,7 @@ routes.route('/messages/send').post(messageController.sendMessage);
 
 // Route to retrieve the chat history for a specific chat session
 routes.route('/history/:chatId').get(messageController.getChatHistory);
-
+  
 // Route to update the status of an offer
 routes.route('/messages/update/:messageId').put(messageController.updateMessage);
 
@@ -30,8 +30,8 @@ routes.route('/delete/:chatId').delete([protect], messageController.deleteChatHi
 // routes.route('/messages/sessions/:userId').get(messageController.getChatSessions);
 
 //--////////////////////////////////
-routes.route("/notifications").get([protect], messageController.notifications);
-routes.route("/readNotification").get([protect], messageController.read);
+// routes.route("/notifications").get([protect], messageController.notifications);
+// routes.route("/readNotification").get([protect], messageController.read);
 //--////////////////////////////////
 return routes;
 };

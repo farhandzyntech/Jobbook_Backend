@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
     }
 })
 const upload = multer({ storage: storage });
-//--////////////////////////////////
+//--//////////////////////////////// 
 //--////////////////////////////////
 const advancedResults = require('../../../middleware/advancedResults');
 const { protect, authorize } = require('../../../middleware/auth');
@@ -29,6 +29,7 @@ let routes = function(){
     routes.route("/news").get([protect], advancedResults(News, {path: 'user', select: 'name picture' }), homeController.fetchNews);
     routes.route("/fourms").get([protect], advancedResults(Forum, {path: 'user', select: 'name picture' }), homeController.fetchForum);
     routes.route("/jobs").get([protect], authorize('talent'), homeController.fetchJobs);
+    routes.route("/allJobs").get(homeController.allJobs);
     //--////////////////////////////////
     routes.route("/notifications").get([protect], authorize('talent'), homeController.notifications);
     routes.route("/read").get([protect], authorize('talent'), homeController.read);
@@ -38,7 +39,7 @@ let routes = function(){
     //--////////////////////////////////
     routes.route("/generate").post([protect], authorize('talent'), homeController.generate);
     routes.route("/generatePdf").get([protect], authorize('talent'), homeController.generatePdf);
-    //--////////////////////////////////
+    //--/////////////////////////////////
     //--////////////////////////////////
     return routes;
 };
