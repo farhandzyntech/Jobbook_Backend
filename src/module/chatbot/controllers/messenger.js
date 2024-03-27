@@ -9,9 +9,11 @@ exports.startOrGetChat = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const receiverId = req.body.receiverId;
+    // console.log(receiverId);
     if(!userId || !receiverId) return next(new ErrorResponse('Receiver Id is required', 400))
     // Check if a chat already exists
-    let chat = await Chat.findOne({ participants: { $in: [userId, receiverId] } });
+                                                  // ambiguity here 
+    let chat = await Chat.findOne({ participants: [userId, receiverId] });
     if (!chat) {
       // If chat doesn't exist, create a new one
       chat = new Chat({
@@ -19,9 +21,7 @@ exports.startOrGetChat = async (req, res, next) => {
       });
       await chat.save();
     }
-
     // const newMessage = new Message({chatId: chat.id, senderId: userId, receiverId, ...req.body});
-
     // Save the message to the database
     // await newMessage.save();
   
@@ -33,15 +33,14 @@ exports.startOrGetChat = async (req, res, next) => {
 };
 
 exports.getMyChats = async (req, res, next) => {
-  const userId = req.user.id; // This assumes that your authentication middleware correctly sets `req.user`
-
+  const userId = req.user.id;
   try {
     // Fetch chats where the logged-in user is a participant
     const myChats = await Chat.find({
-      participants: { $in: [(userId)] },
+      participants: { $in: [userId] },
       deletedFor: { $ne: userId }
     })
-    .populate('participants', 'firstName lastName email role phone photo ') // Adjust based on desired participant details
+    .populate({path:'participants', select: 'name email role phone picture'})
     .sort({ updatedAt: -1 }); // This sorts chats by the most recent
 
     res.json({
@@ -92,13 +91,18 @@ exports.getChatHistory = async (req, res, next) => {
   try {
     const { chatId } = req.params;
     // Fetch all messages and offers for the chat
-    const chatHistory = await Message.find({ chatId }).sort({ createdAt: 1 });
+    const chat = await Chat.findById(chatId)
+      .populate({path:'participants', select: 'name email role phone picture'});
+    const chatHistory = await Message.find({ chatId })
+      .populate({path: 'senderId', select: 'name, picture'})
+      .populate({path: 'receiverId', select: 'name, picture'})
+      .sort({ createdAt: 1 });
 
     // Send response
     res.status(200).json({
       success: true,
       message: 'Chat history fetched successfully',
-      data: chatHistory
+      data: {chat, chatHistory}
     });
   }  catch (error) {
     console.error('ERROR', error);
@@ -133,30 +137,30 @@ exports.updateMessage = async (req, res, next) => {
 };
 
 exports.deleteChatHistory = async (req, res, next) => {
-    try {     
-      const { chatId } = req.params;
-      const userId = req.user._id;
+  try {
+    const { chatId } = req.params;
+    const userId = req.user._id;
 
-      const chat = await Chat.findById(chatId);
-  
-      // Check if the chat exists
-      if (!chat) { return next(new ErrorResponse(`chat not exist`, 404)) }
-      // Check if user is a participant of the chat
-      if (!chat.participants.includes((userId))) {
-        return next(new ErrorResponse(`User is not a participant of the chat`, 403))
-      }
-  
-      // Add the user to the deletedFor array if not already present
-      if (!chat.deletedFor.includes(userId)) {
-        chat.deletedFor.push(userId);
-        await chat.save();
-      }
-    
-      res.status(200).json({ success: true, message: 'Chat and messages deleted successfully.' });
-    }  catch (error) {
-      console.error('ERROR', error);
-      return next(error);
+    const chat = await Chat.findById(chatId);
+
+    // Check if the chat exists
+    if (!chat) { return next(new ErrorResponse(`chat not exist`, 404)) }
+    // Check if user is a participant of the chat
+    if (!chat.participants.includes((userId))) {
+      return next(new ErrorResponse(`User is not a participant of the chat`, 403))
     }
+
+    // Add the user to the deletedFor array if not already present
+    if (!chat.deletedFor.includes(userId)) {
+      chat.deletedFor.push(userId);
+      await chat.save();
+    }
+  
+    res.status(200).json({ success: true, message: 'Chat and messages deleted successfully.' });
+  }  catch (error) {
+    console.error('ERROR', error);
+    return next(error);
+  }
 }
 
 // exports.getChatSessions = async (req, res, next) => {
@@ -184,15 +188,15 @@ exports.deleteChatHistory = async (req, res, next) => {
   
 exports.notifications = async (req, res, next) => {
   try{
-      const notification = await Notification.find({to: req.user.id});
-      const unReadCount = await Notification.countDocuments({to: req.user.id, read: '0'}) 
-      res.status(200).json({
-          success: true,
-          data: {
-              unReadCount,
-              notification
-          }                                                       
-      })
+    const notification = await Notification.find({to: req.user.id});
+    const unReadCount = await Notification.countDocuments({to: req.user.id, read: '0'}) 
+    res.status(200).json({
+      success: true,
+      data: {
+        unReadCount,
+        notification
+      }                                                       
+    })
   } catch (error) {
       console.error(error);
       return next(error)
@@ -201,12 +205,12 @@ exports.notifications = async (req, res, next) => {
 
 exports.read = async (req, res, next) => {
   try{
-      const notification = await Notification.updateMany({to: req.user.id}, { read: '1' });
+    const notification = await Notification.updateMany({to: req.user.id}, { read: '1' });
 
-      res.status(200).json({
-          success: true,
-          // data: notification                                                       
-      })
+    res.status(200).json({
+        success: true,
+        // data: notification                                                       
+    })
   } catch (error) {
       console.error(error);
       return next(error)

@@ -20,15 +20,16 @@ const messageSchema = new mongoose.Schema({
     type: String,
     // required: true
   },
-  amount: {
-    type: String,
-    // required: true
-  },
   type: {
     type: String,
     // required: true,
     enum: ['message'],
     default: 'message'
+  },
+  read: {
+    type: String,
+    enum: ['0', '1'],
+    default: '0'
   },
   status: {
     type: String,

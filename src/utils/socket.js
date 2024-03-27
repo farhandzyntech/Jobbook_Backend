@@ -1,29 +1,26 @@
 const Message = require('../schemas/Message'); 
 const Notification = require('../schemas/Notification'); 
 const notification = require('./notifications');
-const initSocket = (server, corsOptions) => {
-const io = require('socket.io')(server, { cors: corsOptions })
 
-//--////////////////////////////////
-let users = [];
-const addUser = (userId, socketId) => {
-  // Check if the user with the same userId and chatId is already in the array
-  !users.some((user) => user.userId === userId) &&
-    users.push({ userId, socketId });
-};
-const removeUser = (socketId) => {
-  // Remove the user based on socketId
-  users = users.filter((user) => user.socketId !== socketId);
-};
-const getUser = (userId) => {
-  // Find the user based on userId and chatId
-  return users.find((user) => user.userId === userId);
-};
-// const getUser = (userId, chatId) => {
-//   // Find the user based on userId and chatId
-//   return users.find((user) => user.userId === userId && user.chatId === chatId);
-// };
-//--////////////////////////////////
+//Initialize the socket connection
+const initSocket = (server, corsOptions) => {
+  const io = require('socket.io')(server, { cors: corsOptions })
+  let users = [];
+  //--////////////////////////////////
+  const addUser = (userId, socketId) => {
+    // Check if the user with the same userId and chatId is already in the array
+    !users.some((user) => user.userId === userId) &&
+      users.push({ userId, socketId });
+  };
+  const removeUser = (socketId) => {
+    // Remove the user based on socketId
+    users = users.filter((user) => user.socketId !== socketId);
+  };
+  const getUser = (userId) => {
+    // Find the user based on userId and chatId
+    return users.find((user) => user.userId === userId);
+  };
+  //--////////////////////////////////
 
   io.on('connection', (socket) => {
     console.log('User connected');
@@ -36,9 +33,26 @@ const getUser = (userId) => {
     //   socket.to(chatId).emit('LOAD_MESSAGES', messages);
     // });
 
+    socket.on('JOIN_CHAT', (chatId) => {
+      // Join the room
+      socket.join(chatId);
+      //--////////////////////////////////
+      console.log("JOIN_CHAT with chatId = ", chatId);
+      // console.log("chatId", chatId);
+      // console.log("socket.id", socket.id);
+      console.log("socket.rooms", socket.rooms);
+      //--////////////////////////////////
+      // // Load previous messages from MongoDB and send them to the client
+      // const messages = await Message.find({ chatId })
+      // // socket.emit('LOAD_MESSAGES', messages);
+      // socket.to(chatId).emit('LOAD_MESSAGES', messages);
+    });
+
     //when ceonnect
     //take userId and socketId from user
     socket.on("ADD_USER", (userId) => {
+      io.join(userId)
+      console.log("ADD_USER", userId);
       addUser(userId, socket.id);
     });
 
@@ -50,9 +64,13 @@ const getUser = (userId) => {
         const message = new Message(obj);
         await message.save();
 
+        let sendmsg = await Message.findById(message.id)
+          .populate({path: 'senderId', select: 'name, picture'})
+          .populate({path: 'receiverId', select: 'name, picture'})
+
         // Emit the message to the same chat room
         const user = await getUser(obj.receiverId);
-        io.to(user.socketId).emit('RECEIVE_MESSAGE', message);
+        io.to(obj.chatId).emit('RECEIVE_MESSAGE', sendmsg);
       } catch (error) {
         console.error(`Error: ${error}`);
         // Emit an error if there's an issue saving the message
@@ -94,12 +112,12 @@ const getUser = (userId) => {
     // socket.on('disconnect', () => {
     //   console.log('User disconnected');
     // });
-      //when disconnect
-      socket.on("disconnect", () => {
-        console.log("a user disconnected!");
-        removeUser(socket.id);
-        io.emit("getUsers", users);
-      });
+    //when disconnect
+    socket.on("disconnect", () => {
+      console.log("a user disconnected!");
+      removeUser(socket.id);
+      io.emit("getUsers", users);
+    });
   });
 }
 
