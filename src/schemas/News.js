@@ -23,9 +23,17 @@ const NewsSchema = new Schema({
         type: String,
         enum: ['0', '1'],
         default: "1"
-    },
-    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Like' }],
-    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }]
-},{ timestamps: true })
+    }
+},{ toJSON: { virtuals: true }}, { timestamps: true })
+
+// // Reverse populate with virtuals
+NewsSchema.virtual('comments', {
+  ref: 'Comment',
+  localField: '_id',
+  foreignField: 'news',
+  count: true // And only get the number of docs
+//   justOne: false
+});
+
 
 module.exports = mongoose.model('News', NewsSchema);

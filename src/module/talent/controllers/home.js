@@ -8,16 +8,70 @@ const ErrorResponse = require('../../../utils/errorResponse');
 const renderToPDF = require('../../../utils/pdfGenerator'); 
 const renderToPDFNEW = require('../../../utils/newpdfGenerator'); 
 const notification = require('../../../utils/notifications');
+const Comment = require('../../../schemas/Comment');
+const Like = require('../../../schemas/Like');
+const News = require('../../../schemas/News');
+const Forum = require('../../../schemas/Forum');
 // '../utils/pdfGenerator';
 
 
-exports.fetchForum = asyncHandler(async (req, res, next) => { 
-    res.status(200).json(res.advancedResults);
-});
+// exports.fetchForum = asyncHandler(async (req, res, next) => { 
+//     res.status(200).json(res.advancedResults);
+// });
 
-exports.fetchNews = asyncHandler(async (req, res, next) => {
-    res.status(200).json(res.advancedResults);
-});
+// exports.fetchNews = asyncHandler(async (req, res, next) => {
+//     res.status(200).json(res.advancedResults);
+// });
+
+exports.fetchNews = async (req, res, next) => {
+    try {
+        const records = await News.find()
+        .populate({path: 'user', select: 'name picture'})
+        .populate({path: 'comments'})
+
+        res.status(200).json({
+            success: true,
+            data: records                                                      
+        })
+    } catch (err) {
+        console.error(err)
+        return next(err)
+    }
+}
+
+exports.fetchForum = async (req, res, next) => {
+    try {
+        let filters = {};
+        let page = parseInt(req.query.page) || 1;
+        let limit = parseInt(req.query.limit) || 10; // Default limit is 10 records per page
+        let skip = (page - 1) * limit;
+
+        if (req.query.id) {
+            filters._id = req.query.id;
+        }
+
+        const records = await Forum.find(filters)
+            .populate({ path: 'user', select: 'name picture' })
+            .populate({ path: 'comments' })
+            .sort({createdAt: -1})
+            .skip(skip)
+            .limit(limit);
+
+        res.status(200).json({
+            success: true,
+            data: records,
+            pagination: {
+                currentPage: page,
+                totalPages: Math.ceil(records.length / limit),
+                totalRecords: records.length
+            }
+        });
+    } catch (err) {
+        console.error(err)
+        return next(err)
+    }
+}
+
 
 exports.fetchJobs = async (req, res, next) => {
     const userId = req.user._id; // This should be set by your authentication middleware
@@ -411,5 +465,79 @@ exports.read = async (req, res, next) => {
     } catch (error) {
         console.error(error);
         return next(error)
+    }
+}
+
+exports.addComment = async (req, res, next) => {
+    try {
+        let types = ['forum', 'news']
+
+        const {id, type, content} = req.body
+        const userId = req.user.id
+
+        if(!id || !types.includes(type) || !content) return next(new ErrorResponse("Some body Params are missing !", 400))
+
+        let record = null;
+
+        if(type === 'news' ) {
+            record = await News.findById(id)
+        }else if(type === 'forum'){
+            record = await Forum.findById(id)
+        }
+
+        if(!record) return next(new ErrorResponse(`${type} Not Found !`, 400))
+
+        const comment = await Comment.create({
+            news: type === 'news' ? id : null,
+            forum: type === 'forum' ? id : null,
+            user : userId,
+            content
+        })
+
+        res.status(200).json({
+            success: true,
+            data: comment                                                      
+        })
+    } catch (err) {
+        console.error(err);
+        return next(err)
+    }
+}
+
+exports.getComments = async (req, res, next) => {
+    try {
+        const id = req.query.id;
+        const page = parseInt(req.query.page, 10) || 1; // Default to page 1 if not provided
+        const limit = parseInt(req.query.limit, 10) || 10; // Default to 10 comments per page if not provided
+        const skip = (page - 1) * limit;
+
+        const records = await Comment.find({
+            $or: [
+                { news: id },
+                { forum: id },
+            ]
+        })
+        .populate({path: 'user', select: 'name picture'})
+        .skip(skip)
+        .limit(limit);
+
+        // Optional: Return total count of comments for pagination on the client side
+        const totalComments = await Comment.countDocuments({
+            $or: [
+                { news: id },
+                { forum: id },
+            ]
+        });
+
+        res.status(200).json({
+            success: true,
+            count: records.length,
+            page,
+            totalComments: totalComments,
+            totalPages: Math.ceil(totalComments / limit),
+            data: records,
+        });
+    } catch (err) {
+        
     }
 }

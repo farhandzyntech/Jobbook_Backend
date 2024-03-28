@@ -20,6 +20,15 @@ const ForumSchema = new Schema({
         enum: ['0', '1'],
         default: "1"
     }
-},{ timestamps: true })
+},{ toJSON: { virtuals: true }}, { timestamps: true })
+
+// // Reverse populate with virtuals
+ForumSchema.virtual('comments', {
+  ref: 'Comment',
+  localField: '_id',
+  foreignField: 'forum',
+  count: true // And only get the number of docs
+//   justOne: false
+});
 
 module.exports = mongoose.model('Forum', ForumSchema);

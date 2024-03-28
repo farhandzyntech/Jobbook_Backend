@@ -63,7 +63,7 @@ app.use(limiter);
 app.use(hpp());
 
 //--////////////////////////////////////////////////////////////////
-let whitelist = ['http://dzyntech-101:3000', 'http://localhost:3000', 'https://jobbookdevelop.netlify.app', 'https://jobbookbackend.azurewebsites.net', 'https://node.jobbooks.app', 'https://4b75-2400-adc1-126-2d00-ade8-4b9f-8faa-df73.ngrok-free.app']
+let whitelist = ['https://demo.jobbooks.app', 'http://localhost:3000', 'https://node.jobbooks.app']
 const corsOptions = {
   origin: function (origin, callback) {
     // Check if the origin is in the whitelist or if it's coming from Postman

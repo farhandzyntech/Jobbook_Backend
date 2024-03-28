@@ -40,6 +40,16 @@ let routes = function(){
     routes.route("/generate").post([protect], authorize('talent'), homeController.generate);
     routes.route("/generatePdf").get([protect], authorize('talent'), homeController.generatePdf);
     //--/////////////////////////////////
+
+    // Add a comment to a post
+    routes.route("/comment").post([protect], homeController.addComment);
+    // Delete a comment from a post
+    // routes.route("/comment/:id").put([protect], homeController.updateComment);
+    // Delete a comment from a post
+    // routes.route("/comment/:id").delete([protect], homeController.deleteComment);
+    // Get all comments for a post
+    routes.route("/comments").get([protect], homeController.getComments);
+
     //--////////////////////////////////
     return routes;
 };
