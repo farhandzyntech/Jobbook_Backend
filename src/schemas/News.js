@@ -23,7 +23,9 @@ const NewsSchema = new Schema({
         type: String,
         enum: ['0', '1'],
         default: "1"
-    }
+    },
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Like' }],
+    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }]
 },{ timestamps: true })
 
 module.exports = mongoose.model('News', NewsSchema);

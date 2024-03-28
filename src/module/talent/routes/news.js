@@ -29,6 +29,15 @@ let routes = function(){
     routes.route("/update/:id").put([protect], authorize('talent'), upload.single('picture'), newsController.update);
     routes.route("/delete/:id").delete([protect], authorize('talent'), newsController.delete);
     //--//
+
+    //--//
+    // Add a comment to a post
+    routes.route("/comments").post([protect], newsController.addComment);
+    // Delete a comment from a post
+    routes.route("/comments").delete([protect], newsController.deleteComment);
+    // Get all comments for a post
+    routes.route("/comments").get([protect], newsController.getComments);
+    
     return routes;
 };
 //--//
